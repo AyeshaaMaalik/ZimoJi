@@ -25,7 +25,7 @@ const Main = () => {
 
   const toggleCamera = () => {
     if (flashOn) {
-      toggleTorch(); 
+      toggleTorch();
     }
     setIsFrontCamera(prev => !prev);
   };
@@ -52,7 +52,7 @@ const Main = () => {
         style={styles.camera}
         device={device}
         isActive={true}
-        flash={flashOn ? 'on' : 'off'}
+        flash={flashOn ? 'on' : 'off'} 
       />
 
       <View style={styles.header}>
