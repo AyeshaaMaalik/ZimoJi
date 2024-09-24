@@ -41,16 +41,22 @@ const CustomDrawerContent = (props) => {
     </DrawerContentScrollView>
   );
 };
-
 const DrawerNavigator = () => {
   return (
     <Drawer.Navigator
       initialRouteName="Scan"
       drawerContent={(props) => <CustomDrawerContent {...props} />}
-      screenOptions={{
+      screenOptions={({ route }) => ({
+        headerShown: false,
         drawerStyle: { backgroundColor: '#000' }, 
-        drawerLabelStyle: { color: '#fff' },
-      }}
+        drawerLabelStyle: {
+          color: '#fff', 
+        },
+        drawerActiveBackgroundColor: '#000', 
+        drawerActiveTintColor: '#000', 
+        drawerInactiveTintColor: '#fff',
+        
+      })}
     >
       <Drawer.Screen 
         name="SCAN" 
@@ -59,9 +65,10 @@ const DrawerNavigator = () => {
           drawerIcon: ({ focused, size }) => (
             <Image
               source={require('../Assets/Scan.png')}
-              style={[styles.icon, { width: size * 1.5, height: size * 1.5 }]}
+              style={[styles.icon, { width: size * 1.5, height: size * 1.5, marginLeft: 10 }]} // Add marginLeft to move right
             />
           ),
+          cardStyle: { backgroundColor: '#000' },
         }} 
       />
       <Drawer.Screen 
@@ -71,9 +78,11 @@ const DrawerNavigator = () => {
           drawerIcon: ({ focused, size }) => (
             <Image
               source={require('../Assets/ScanImage.png')} 
-              style={[styles.icon, { width: size * 1.5, height: size * 1.5 }]} 
+              style={[styles.icon, { width: size * 1.5, height: size * 1.5, marginLeft: 10 }]} // Add marginLeft to move right
             />
           ),
+          cardStyle: { backgroundColor: '#000' },
+
         }} 
       />
       <Drawer.Screen 
@@ -83,9 +92,11 @@ const DrawerNavigator = () => {
           drawerIcon: ({ focused, size }) => (
             <Image
               source={require('../Assets/History.png')} 
-              style={[styles.icon, { width: size * 1.5, height: size * 1.5 }]} 
+              style={[styles.icon, { width: size * 1.5, height: size * 1.5, marginLeft: 10 }]} // Add marginLeft to move right
             />
           ),
+          cardStyle: { backgroundColor: '#000' },
+
         }} 
       />
       <Drawer.Screen 
@@ -95,9 +106,11 @@ const DrawerNavigator = () => {
           drawerIcon: ({ focused, size }) => (
             <Image
               source={require('../Assets/Favourites.png')}
-              style={[styles.icon, { width: size * 1.5, height: size * 1.5 }] }
+              style={[styles.icon, { width: size * 1.5, height: size * 1.5, marginLeft: 10 }]} // Add marginLeft to move right
             />
           ),
+          cardStyle: { backgroundColor: '#000' },
+
         }} 
       />
       <Drawer.Screen 
@@ -107,9 +120,11 @@ const DrawerNavigator = () => {
           drawerIcon: ({ focused, size }) => (
             <Image
               source={require('../Assets/Contact.png')} 
-              style={[styles.icon, { width: size * 1.5, height: size * 1.5 }] }
+              style={[styles.icon, { width: size * 1.5, height: size * 1.5, marginLeft: 10 }]} // Add marginLeft to move right
             />
           ),
+          cardStyle: { backgroundColor: '#000' },
+
         }} 
       />
       <Drawer.Screen 
@@ -119,14 +134,17 @@ const DrawerNavigator = () => {
           drawerIcon: ({ focused, size }) => (
             <Image
               source={require('../Assets/Choose.png')}
-              style={[styles.icon, { width: size * 1.5, height: size * 1.5 }] }
+              style={[styles.icon, { width: size * 1.5, height: size * 1.5, marginLeft: 10 }]} // Add marginLeft to move right
             />
           ),
+          cardStyle: { backgroundColor: '#000' },
+
         }} 
       />
     </Drawer.Navigator>
   );
 };
+
 
 const styles = StyleSheet.create({
   drawer: {
@@ -149,7 +167,7 @@ const styles = StyleSheet.create({
     flex: 1, 
   },
   footerContainer: {
-    marginTop: 170,
+    marginTop: 100,
     paddingHorizontal: 20,
     alignItems: 'baseline',
 
