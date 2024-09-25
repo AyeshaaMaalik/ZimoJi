@@ -26,7 +26,7 @@ const CustomDrawerContent = (props) => {
           THIS APPLICATION IS DESIGNED TO BE USED
         </Text>
         <Text style={styles.footerText1}>
-        EXCLUSIVELY WITH ZIMOJI'S.
+          EXCLUSIVELY WITH ZIMOJI'S.
         </Text>
         <Text style={styles.footerText}>
           COPYRIGHT © 2024 ZIMOJI | ZIMO GROUP LIMITED.
@@ -34,13 +34,20 @@ const CustomDrawerContent = (props) => {
         <Text style={styles.footerText1}>
           ALL RIGHTS RESERVED.
         </Text>
-        <Text style={styles.footerText}>
-          TERMS | PRIVACY
-        </Text>
+        <View style={styles.termsContainer}>
+          <Text style={styles.footerText}>
+            TERMS | PRIVACY
+          </Text>
+          <Image 
+            source={require('../Assets/ZIMOWhite.png')} 
+            style={styles.icon} 
+          />
+        </View>
       </View>
     </DrawerContentScrollView>
   );
 };
+
 const DrawerNavigator = () => {
   return (
     <Drawer.Navigator
@@ -55,7 +62,6 @@ const DrawerNavigator = () => {
         drawerActiveBackgroundColor: '#000', 
         drawerActiveTintColor: '#000', 
         drawerInactiveTintColor: '#fff',
-        
       })}
     >
       <Drawer.Screen 
@@ -65,7 +71,7 @@ const DrawerNavigator = () => {
           drawerIcon: ({ focused, size }) => (
             <Image
               source={require('../Assets/Scan.png')}
-              style={[styles.icon, { width: size * 1.5, height: size * 1.5, marginLeft: 10 }]} // Add marginLeft to move right
+              style={[styles.icon, { width: size * 1.5, height: size * 1.5, marginLeft: 10 }]} 
             />
           ),
           cardStyle: { backgroundColor: '#000' },
@@ -78,11 +84,10 @@ const DrawerNavigator = () => {
           drawerIcon: ({ focused, size }) => (
             <Image
               source={require('../Assets/ScanImage.png')} 
-              style={[styles.icon, { width: size * 1.5, height: size * 1.5, marginLeft: 10 }]} // Add marginLeft to move right
+              style={[styles.icon, { width: size * 1.5, height: size * 1.5, marginLeft: 10 }]} 
             />
           ),
           cardStyle: { backgroundColor: '#000' },
-
         }} 
       />
       <Drawer.Screen 
@@ -92,11 +97,10 @@ const DrawerNavigator = () => {
           drawerIcon: ({ focused, size }) => (
             <Image
               source={require('../Assets/History.png')} 
-              style={[styles.icon, { width: size * 1.5, height: size * 1.5, marginLeft: 10 }]} // Add marginLeft to move right
+              style={[styles.icon, { width: size * 1.5, height: size * 1.5, marginLeft: 10 }]} 
             />
           ),
           cardStyle: { backgroundColor: '#000' },
-
         }} 
       />
       <Drawer.Screen 
@@ -106,11 +110,10 @@ const DrawerNavigator = () => {
           drawerIcon: ({ focused, size }) => (
             <Image
               source={require('../Assets/Favourites.png')}
-              style={[styles.icon, { width: size * 1.5, height: size * 1.5, marginLeft: 10 }]} // Add marginLeft to move right
+              style={[styles.icon, { width: size * 1.5, height: size * 1.5, marginLeft: 10 }]} 
             />
           ),
           cardStyle: { backgroundColor: '#000' },
-
         }} 
       />
       <Drawer.Screen 
@@ -120,11 +123,10 @@ const DrawerNavigator = () => {
           drawerIcon: ({ focused, size }) => (
             <Image
               source={require('../Assets/Contact.png')} 
-              style={[styles.icon, { width: size * 1.5, height: size * 1.5, marginLeft: 10 }]} // Add marginLeft to move right
+              style={[styles.icon, { width: size * 1.5, height: size * 1.5, marginLeft: 10 }]} 
             />
           ),
           cardStyle: { backgroundColor: '#000' },
-
         }} 
       />
       <Drawer.Screen 
@@ -134,26 +136,23 @@ const DrawerNavigator = () => {
           drawerIcon: ({ focused, size }) => (
             <Image
               source={require('../Assets/Choose.png')}
-              style={[styles.icon, { width: size * 1.5, height: size * 1.5, marginLeft: 10 }]} // Add marginLeft to move right
+              style={[styles.icon, { width: size * 1.5, height: size * 1.5, marginLeft: 10 }]} 
             />
           ),
           cardStyle: { backgroundColor: '#000' },
-
         }} 
       />
     </Drawer.Navigator>
   );
 };
 
-
 const styles = StyleSheet.create({
   drawer: {
     backgroundColor: '#000',
   },
   logoContainer: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 20,
+    alignItems: 'flex-start',
+    marginLeft: 30,
   },
   logo: {
     width: 120,
@@ -162,6 +161,9 @@ const styles = StyleSheet.create({
   },
   icon: {
     resizeMode: 'contain',
+    width: 200, 
+    height: 30, 
+    marginLeft: 5,
   },
   footerSpacer: {
     flex: 1, 
@@ -170,13 +172,19 @@ const styles = StyleSheet.create({
     marginTop: 100,
     paddingHorizontal: 20,
     alignItems: 'baseline',
-
+  },
+  termsContainer: {
+    flexDirection: 'row',
+    alignItems: 'center', 
+    justifyContent: 'space-between', 
+    width: '100%', 
   },
   footerText: {
     color: '#fff',
-    textAlign: 'center',
+    textAlign: 'left', 
     fontSize: 10,
     fontWeight: '300',
+    marginRight: 5,
   },
   footerText1: {
     color: '#fff',
