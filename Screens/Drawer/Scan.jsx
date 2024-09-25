@@ -1,6 +1,6 @@
 import { useNavigation } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, View, Text, Button, Linking, Image, TouchableOpacity, Alert } from 'react-native';
+import { StyleSheet, View, Text, Button, Linking, Image, TouchableOpacity, Alert, ToastAndroid } from 'react-native';
 import { Camera, useCameraDevice, useCameraPermission, useCodeScanner } from 'react-native-vision-camera';
 
 const Main = () => {
@@ -9,29 +9,39 @@ const Main = () => {
   const { hasPermission, requestPermission } = useCameraPermission();
   const navigation = useNavigation();
   const [flashOn, setFlashOn] = useState(false);
-  const [scannedCode, setScannedCode] = useState(''); 
-
+  const [isNavigating, setIsNavigating] = useState(false); 
+  
   const codeScanner = useCodeScanner({
     codeTypes: ['qr', 'ean-13'],
     onCodeScanned: (codes) => {
-      console.log(`Scanned ${codes.length} codes!`);
+      if (isNavigating) {
+        return; 
+      }
+
       if (codes.length > 0) {
-        const codeData = codes[0].data;
-        setScannedCode(codeData);
-        Alert.alert("QR Code Scanned", `Scanned Code: ${codeData}`, [
-          {
-            text: "Open Link",
-            onPress: () => {
-              if (codeData.startsWith('http://') || codeData.startsWith('https://')) {
-                Linking.openURL(codeData);
-              }
-            },
-          },
-          {
-            text: "Cancel",
-            style: "cancel",
-          },
-        ]);
+        const scannedCode = codes[0];
+        const url = scannedCode?.value;
+
+        if (url && typeof url === 'string' && url.startsWith('http')) {
+          console.log(`Navigating to: ${url}`);
+          setIsNavigating(true); // Set navigating to true to prevent multiple taps
+
+          Linking.openURL(url)
+            .then(() => {
+              ToastAndroid.show("Navigating to URL...", ToastAndroid.SHORT);
+              setTimeout(() => {
+                setIsNavigating(false); // Allow new scans after a short delay
+              }, 1000); // Adjust delay as needed to debounce
+            })
+            .catch(err => {
+              console.error("Failed to open URL:", err);
+              ToastAndroid.show("Failed to open URL", ToastAndroid.SHORT);
+              setIsNavigating(false); // Reset navigation state on failure
+            });
+        } else {
+          Alert.alert("Scanned code is not a valid URL:", url);
+          ToastAndroid.show("Invalid code scanned. Please try again.", ToastAndroid.SHORT);
+        }
       }
     }
   });
@@ -115,13 +125,6 @@ const Main = () => {
           />
         </TouchableOpacity>
       </View>
-
-      {/* Display the scanned code */}
-      {scannedCode ? (
-        <View style={styles.scannedCodeContainer}>
-          <Text style={styles.scannedCodeText}>Scanned Code: {scannedCode}</Text>
-        </View>
-      ) : null}
     </View>
   );
 };
@@ -169,20 +172,6 @@ const styles = StyleSheet.create({
   icon3: {
     width: 30,
     height: 30,
-  },
-  scannedCodeContainer: {
-    position: 'absolute',
-    bottom: 80,
-    left: 20,
-    right: 20,
-    padding: 10,
-    backgroundColor: 'rgba(255, 255, 255, 0.8)',
-    borderRadius: 5,
-  },
-  scannedCodeText: {
-    fontSize: 16,
-    color: '#000',
-    textAlign: 'center',
   },
 });
 
