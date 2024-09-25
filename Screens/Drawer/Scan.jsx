@@ -28,7 +28,7 @@ const Main = () => {
           setIsNavigating(true); 
           
           const currentDate = new Date();
-          const formattedDate = currentDate.toISOString(); // Format: YYYY-MM-DDTHH:MM:SSZ
+          const formattedDate = currentDate.toISOString(); 
 
           setHistory(prevHistory => [
             ...prevHistory,

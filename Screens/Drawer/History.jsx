@@ -76,7 +76,9 @@ const History = () => {
                 <View key={item.id} style={styles.historyItem}>
                   <Image source={require('../Assets/MenuSection.png')} style={styles.historyIcon} resizeMode="contain" />
                   <View style={styles.historyContent}>
-                    <Text style={styles.urlTitle}>URL</Text>
+                    <View style={styles.urlContainer}>
+                      <Text style={styles.urlTitle}>URL</Text>
+                    </View>
                     <Text style={styles.url}>{item.url}</Text>
                     <Text style={styles.title}>{item.title}</Text>
                     <Text style={styles.date}>{formattedDate}</Text>
@@ -131,7 +133,7 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 18,
-    color: 'white',
+    color: 'gray',
     fontWeight: 'bold',
     marginBottom: 5,
   },
@@ -150,9 +152,18 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: 'black',
   },
+  urlContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
   urlTitle: {
     fontWeight: 'bold',
     color: 'white',
+    marginRight: 5, // Add space between title and icon
+  },
+  urlIcon: {
+    width: 20,
+    height: 20, // Adjust size as necessary
   },
   url: {
     color: 'white',
@@ -162,7 +173,7 @@ const styles = StyleSheet.create({
     color: 'white',
   },
   date: {
-    color: 'white',
+    color: 'gray',
     fontSize: 12,
   },
   iconWrapper: {
