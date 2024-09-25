@@ -24,19 +24,18 @@ const Main = () => {
 
         if (url && typeof url === 'string' && url.startsWith('http')) {
           console.log(`Navigating to: ${url}`);
-          setIsNavigating(true); // Set navigating to true to prevent multiple taps
-
+          setIsNavigating(true); 
           Linking.openURL(url)
             .then(() => {
               ToastAndroid.show("Navigating to URL...", ToastAndroid.SHORT);
               setTimeout(() => {
-                setIsNavigating(false); // Allow new scans after a short delay
-              }, 1000); // Adjust delay as needed to debounce
+                setIsNavigating(false); 
+              }, 1000);
             })
             .catch(err => {
               console.error("Failed to open URL:", err);
               ToastAndroid.show("Failed to open URL", ToastAndroid.SHORT);
-              setIsNavigating(false); // Reset navigation state on failure
+              setIsNavigating(false);
             });
         } else {
           Alert.alert("Scanned code is not a valid URL:", url);
@@ -55,8 +54,16 @@ const Main = () => {
     requestCameraPermission();
   }, [hasPermission, requestPermission]);
 
-  const toggleTorch = () => {
-    setFlashOn(prev => !prev);
+  
+  const toggleTorch = async () => {
+    if (device?.torchAvailable) {
+      setFlashOn((prev) => {
+        const newFlashState = !prev;
+        return newFlashState;
+      });
+    } else {
+      Alert.alert("Flashlight not available on this device.");
+    }
   };
 
   const toggleCamera = () => {
