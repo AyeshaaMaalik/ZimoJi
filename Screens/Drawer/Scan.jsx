@@ -10,7 +10,8 @@ const Main = () => {
   const navigation = useNavigation();
   const [flashOn, setFlashOn] = useState(false);
   const [isNavigating, setIsNavigating] = useState(false); 
-  
+  const [history, setHistory] = useState([]); 
+
   const codeScanner = useCodeScanner({
     codeTypes: ['qr', 'ean-13'],
     onCodeScanned: (codes) => {
@@ -25,12 +26,23 @@ const Main = () => {
         if (url && typeof url === 'string' && url.startsWith('http')) {
           console.log(`Navigating to: ${url}`);
           setIsNavigating(true); 
+          
+          const currentDate = new Date();
+          const formattedDate = currentDate.toISOString(); // Format: YYYY-MM-DDTHH:MM:SSZ
+
+          setHistory(prevHistory => [
+            ...prevHistory,
+            { id: prevHistory.length + 1, date: formattedDate, url, title: 'Scanned QR Code' }
+          ]);
+
+          setTimeout(() => {
+            navigation.navigate('HISTORY', { history: [...history, { date: formattedDate, url, title: 'Scanned QR Code' }] });
+            setIsNavigating(false); 
+          }, 1000);
+          
           Linking.openURL(url)
             .then(() => {
               ToastAndroid.show("Navigating to URL...", ToastAndroid.SHORT);
-              setTimeout(() => {
-                setIsNavigating(false); 
-              }, 1000);
             })
             .catch(err => {
               console.error("Failed to open URL:", err);
@@ -54,13 +66,9 @@ const Main = () => {
     requestCameraPermission();
   }, [hasPermission, requestPermission]);
 
-  
   const toggleTorch = async () => {
     if (device?.torchAvailable) {
-      setFlashOn((prev) => {
-        const newFlashState = !prev;
-        return newFlashState;
-      });
+      setFlashOn(prev => !prev);
     } else {
       Alert.alert("Flashlight not available on this device.");
     }
@@ -98,38 +106,18 @@ const Main = () => {
         flash={flashOn ? 'on' : 'off'}
         codeScanner={codeScanner}
       />
-
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.openDrawer()}>
-          <Image
-            source={require('../Assets/Menu.png')}
-            style={styles.icon1}
-            resizeMode="contain"
-          />
+          <Image source={require('../Assets/Menu.png')} style={styles.icon1} resizeMode="contain" />
         </TouchableOpacity>
-        <Image
-          source={require('../Assets/SplashWhite.png')}
-          style={styles.icon2}
-          resizeMode="contain"
-        />
+        <Image source={require('../Assets/SplashWhite.png')} style={styles.icon2} resizeMode="contain" />
         <TouchableOpacity onPress={toggleTorch}>
-          <Image
-            source={flashOn
-              ? require('../Assets/TorchFlashON.png')
-              : require('../Assets/TorchFlashOFF.png')}
-            style={styles.icon3}
-            resizeMode="contain"
-          />
+          <Image source={flashOn ? require('../Assets/TorchFlashON.png') : require('../Assets/TorchFlashOFF.png')} style={styles.icon3} resizeMode="contain" />
         </TouchableOpacity>
       </View>
-
       <View style={styles.flipContainer}>
         <TouchableOpacity onPress={toggleCamera}>
-          <Image
-            source={require('../Assets/Flip.png')}
-            style={styles.flipIcon}
-            resizeMode="contain"
-          />
+          <Image source={require('../Assets/Flip.png')} style={styles.flipIcon} resizeMode="contain" />
         </TouchableOpacity>
       </View>
     </View>
