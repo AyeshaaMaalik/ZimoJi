@@ -149,7 +149,7 @@ const styles = StyleSheet.create({
   icon: {
     resizeMode: 'contain',
     width: 200,
-    height: 30,
+    height: 25,
   },
   icon1: {
     resizeMode: 'contain',
