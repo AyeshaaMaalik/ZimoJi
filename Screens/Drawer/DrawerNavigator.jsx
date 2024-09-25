@@ -19,7 +19,9 @@ const CustomDrawerContent = (props) => {
           style={styles.logo}
         />
       </View>
-      <DrawerItemList {...props} />
+      <View style={styles.drawerItemsContainer}>
+        <DrawerItemList {...props} />
+      </View>
       <View style={styles.footerSpacer} />
       <View style={styles.footerContainer}>
         <Text style={styles.footerText}>
@@ -47,32 +49,40 @@ const CustomDrawerContent = (props) => {
     </DrawerContentScrollView>
   );
 };
-
 const DrawerNavigator = () => {
   return (
     <Drawer.Navigator
       initialRouteName="Scan"
       drawerContent={(props) => <CustomDrawerContent {...props} />}
-      screenOptions={({ route }) => ({
+      screenOptions={{
         headerShown: false,
-        drawerStyle: { backgroundColor: '#000' }, 
+        drawerStyle: { backgroundColor: '#000' },
         drawerLabelStyle: {
-          color: '#fff', 
+          color: '#fff',
         },
-        drawerActiveBackgroundColor: '#000', 
-        drawerActiveTintColor: '#000', 
+        drawerActiveBackgroundColor: '#000',
+        drawerActiveTintColor: '#FFD700', 
         drawerInactiveTintColor: '#fff',
-      })}
+      }}
     >
       <Drawer.Screen 
         name="SCAN" 
         component={Scan} 
         options={{ 
           drawerIcon: ({ focused, size }) => (
-            <Image
-              source={require('../Assets/Scan.png')}
-              style={[styles.icon, { width: size * 1.5, height: size * 1.5, marginLeft: 10 }]} 
-            />
+            <View style={styles.drawerItem}>
+              <Image
+                source={require('../Assets/Scan.png')}
+                style={[styles.icon1, { width: size * 1.5, height: size * 1.5 }]} 
+              />
+              {focused && (
+                
+                <Image
+                  source={require('../Assets/MenuSection.png')} 
+                  style={[styles.menuIcon, { width: size , height: size * 1.7}]} 
+                />
+              )}
+            </View>
           ),
           cardStyle: { backgroundColor: '#000' },
         }} 
@@ -82,10 +92,18 @@ const DrawerNavigator = () => {
         component={ScanImage} 
         options={{ 
           drawerIcon: ({ focused, size }) => (
-            <Image
-              source={require('../Assets/ScanImage.png')} 
-              style={[styles.icon, { width: size * 1.5, height: size * 1.5, marginLeft: 10 }]} 
-            />
+            <View style={styles.drawerItem}>
+              <Image
+                source={require('../Assets/ScanImage.png')} 
+                style={[styles.icon1, { width: size * 1.5, height: size * 1.5 }]} 
+              />
+              {focused && (
+                <Image
+                  source={require('../Assets/MenuSection.png')}
+                  style={[styles.menuIcon, { width: size , height: size * 1.7}]} 
+                />
+              )}
+            </View>
           ),
           cardStyle: { backgroundColor: '#000' },
         }} 
@@ -95,10 +113,18 @@ const DrawerNavigator = () => {
         component={History} 
         options={{ 
           drawerIcon: ({ focused, size }) => (
-            <Image
-              source={require('../Assets/History.png')} 
-              style={[styles.icon, { width: size * 1.5, height: size * 1.5, marginLeft: 10 }]} 
-            />
+            <View style={styles.drawerItem}>
+              <Image
+                source={require('../Assets/History.png')} 
+                style={[styles.icon1, { width: size * 1.5, height: size * 1.5 }]} 
+              />
+              {focused && (
+                <Image
+                  source={require('../Assets/MenuSection.png')}
+                  style={[styles.menuIcon, { width: size , height: size * 1.7}]} 
+                />
+              )}
+            </View>
           ),
           cardStyle: { backgroundColor: '#000' },
         }} 
@@ -108,10 +134,18 @@ const DrawerNavigator = () => {
         component={Favorites} 
         options={{ 
           drawerIcon: ({ focused, size }) => (
-            <Image
-              source={require('../Assets/Favourites.png')}
-              style={[styles.icon, { width: size * 1.5, height: size * 1.5, marginLeft: 10 }]} 
-            />
+            <View style={styles.drawerItem}>
+              <Image
+                source={require('../Assets/Favourites.png')}
+                style={[styles.icon1, { width: size * 1.5, height: size * 1.5 }]} 
+              />
+              {focused && (
+                <Image
+                  source={require('../Assets/MenuSection.png')}
+                  style={[styles.menuIcon,  { width: size , height: size * 1.7}]} 
+                />
+              )}
+            </View>
           ),
           cardStyle: { backgroundColor: '#000' },
         }} 
@@ -121,10 +155,18 @@ const DrawerNavigator = () => {
         component={Contacts} 
         options={{ 
           drawerIcon: ({ focused, size }) => (
-            <Image
-              source={require('../Assets/Contact.png')} 
-              style={[styles.icon, { width: size * 1.5, height: size * 1.5, marginLeft: 10 }]} 
-            />
+            <View style={styles.drawerItem}>
+              <Image
+                source={require('../Assets/Contact.png')} 
+                style={[styles.icon1, { width: size * 1.5, height: size * 1.5 }]} 
+              />
+              {focused && (
+                <Image
+                  source={require('../Assets/MenuSection.png')}
+                  style={[styles.menuIcon,  { width: size , height: size * 1.7}]} 
+                />
+              )}
+            </View>
           ),
           cardStyle: { backgroundColor: '#000' },
         }} 
@@ -134,10 +176,18 @@ const DrawerNavigator = () => {
         component={ChooseLogo} 
         options={{ 
           drawerIcon: ({ focused, size }) => (
-            <Image
-              source={require('../Assets/Choose.png')}
-              style={[styles.icon, { width: size * 1.5, height: size * 1.5, marginLeft: 10 }]} 
-            />
+            <View style={styles.drawerItem}>
+              <Image
+                source={require('../Assets/Choose.png')}
+                style={[styles.icon1, { width: size * 1.5, height: size * 1.5 }]} 
+              />
+              {focused && (
+                <Image
+                  source={require('../Assets/MenuSection.png')}
+                  style={[styles.menuIcon, { width: size , height: size * 1.7}]} 
+                />
+              )}
+            </View>
           ),
           cardStyle: { backgroundColor: '#000' },
         }} 
@@ -152,7 +202,7 @@ const styles = StyleSheet.create({
   },
   logoContainer: {
     alignItems: 'flex-start',
-    marginLeft: 30,
+    paddingLeft: 53, 
   },
   logo: {
     width: 120,
@@ -163,7 +213,26 @@ const styles = StyleSheet.create({
     resizeMode: 'contain',
     width: 200, 
     height: 30, 
-    marginLeft: 5,
+  },
+  icon1: {
+    resizeMode: 'contain',
+    width: 30, 
+    height: 30,
+    left: 23,
+    top: '50%', 
+    transform: [{ translateY: -15 }],
+  },
+  menuIcon: {
+    width: 30,
+    resizeMode: 'contain', 
+    marginRight: 10, 
+  },
+  drawerItemsContainer: {},
+  drawerItem: {
+    flexDirection: 'row',
+    alignItems: 'flex-start', 
+    justifyContent:'flex-start',
+    position: 'relative',
   },
   footerSpacer: {
     flex: 1, 
