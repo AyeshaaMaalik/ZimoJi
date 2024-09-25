@@ -1,30 +1,54 @@
 import { useNavigation, useRoute } from '@react-navigation/native';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 const History = () => {
   const navigation = useNavigation();
   const route = useRoute();
-  const historyData = route.params?.history || []; 
+  const [historyData, setHistoryData] = useState([]);
+
+  useEffect(() => {
+    const loadHistoryData = async () => {
+      try {
+        const storedHistory = await AsyncStorage.getItem('historyData');
+        if (storedHistory) {
+          setHistoryData(JSON.parse(storedHistory));
+        } else {
+          setHistoryData(route.params?.history || []);
+        }
+      } catch (error) {
+        console.error('Failed to load history data:', error);
+        setHistoryData(route.params?.history || []);
+      }
+    };
+
+    loadHistoryData();
+  }, [route.params?.history]);
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
-    
     if (isNaN(date)) {
       console.error(`Invalid date: ${dateString}`);
-      return { formattedDate: null };
+      return { formattedDate: null, isToday: false };
     }
 
-    const options = { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
+    const isToday = date.toDateString() === new Date().toDateString();
+    const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
+    const datePart = date.toLocaleDateString('en-US', options);
+    const timePart = date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
+
     return {
-      formattedDate: date.toLocaleString('en-GB', options).replace(',', ''),
+      formattedDate: `${datePart} | ${timePart}`,
+      isToday,
+      displayDate: isToday ? 'Today' : date.toLocaleDateString('en-GB', { year: 'numeric', month: 'long', day: 'numeric' }).toUpperCase(),
     };
   };
 
   const groupedHistory = historyData.reduce((acc, item) => {
-    const { formattedDate } = formatDate(item.date);
-    
+    const { formattedDate, isToday, displayDate } = formatDate(item.date);
     if (formattedDate) {
-      const sectionKey = formattedDate.split(' ')[0]; 
+      const sectionKey = isToday ? 'Today' : displayDate; 
       if (!acc[sectionKey]) {
         acc[sectionKey] = [];
       }
@@ -45,9 +69,7 @@ const History = () => {
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         {Object.keys(groupedHistory).map((sectionKey) => (
           <View key={sectionKey} style={styles.historyContainer}>
-            <Text style={styles.sectionTitle}>
-              {sectionKey === `${new Date().toLocaleString('default', { month: 'long' })} ${new Date().getFullYear()}` ? 'Today' : sectionKey}
-            </Text>
+            <Text style={styles.sectionTitle}>{sectionKey}</Text>
             {groupedHistory[sectionKey].map((item) => {
               const { formattedDate } = formatDate(item.date);
               return (
@@ -57,7 +79,7 @@ const History = () => {
                     <Text style={styles.urlTitle}>URL</Text>
                     <Text style={styles.url}>{item.url}</Text>
                     <Text style={styles.title}>{item.title}</Text>
-                    <Text style={styles.date}>{formattedDate}</Text> 
+                    <Text style={styles.date}>{formattedDate}</Text>
                   </View>
                   <TouchableOpacity style={styles.iconWrapper}>
                     <Image source={require('../Assets/Option.png')} style={styles.optionsIcon} resizeMode="contain" />
@@ -71,7 +93,6 @@ const History = () => {
     </View>
   );
 };
-
 
 const styles = StyleSheet.create({
   container: {
@@ -103,7 +124,7 @@ const styles = StyleSheet.create({
     height: 80,
   },
   placeholder: {
-    width: 30, 
+    width: 30,
   },
   historyContainer: {
     marginBottom: 20,
@@ -127,7 +148,7 @@ const styles = StyleSheet.create({
   },
   historyContent: {
     flex: 1,
-    backgroundColor:'black',
+    backgroundColor: 'black',
   },
   urlTitle: {
     fontWeight: 'bold',
