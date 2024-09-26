@@ -46,6 +46,14 @@ const History = () => {
     };
   };
 
+
+  const deleteHistoryItem = async (itemToDelete) => {
+    const updatedHistory = historyData.filter(item => item.id !== itemToDelete.id);
+    setHistoryData(updatedHistory);
+
+    setSelectedHistoryItem(null);
+  };
+
   const groupedHistory = historyData.reduce((acc, item) => {
     const { formattedDate, isToday, displayDate } = formatDate(item.date);
     if (formattedDate) {
@@ -89,7 +97,9 @@ const History = () => {
             <Image source={require('../Assets/Favourites.png')} style={styles.bottomIcon} resizeMode="contain" />
             <Image source={require('../Assets/Share.png')} style={styles.bottomIcon} resizeMode="contain" />
             <Image source={require('../Assets/Copy.png')} style={styles.bottomIcon} resizeMode="contain" />
-            <Image source={require('../Assets/Delete.png')} style={styles.bottomIcon} resizeMode="contain" />
+            <TouchableOpacity onPress={() => deleteHistoryItem(selectedHistoryItem)}>
+              <Image source={require('../Assets/Delete.png')} style={styles.bottomIcon} resizeMode="contain" />
+            </TouchableOpacity>
           </View>
         </View>
       </View>
@@ -116,7 +126,7 @@ const History = () => {
             {groupedHistory[sectionKey].map((item) => {
               const { formattedDate } = formatDate(item.date);
               return (
-                <View key={item.id} style={styles.historyItem}>
+                <View key={item.id} style={styles.historyItem}> 
                   <Image source={require('../Assets/MenuSection.png')} style={styles.historyIcon} resizeMode="contain" />
                   <View style={styles.historyContent}>
                     <View style={styles.urlContainer}>
@@ -206,16 +216,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: 'black',
     borderRadius: 8,
-    marginBottom:10,
-    color:'white',
+    marginBottom: 10,
+    color: 'white',
   },
   urlContainer1: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: 'black',
-    marginBottom:10,
-    color:'white',
-    fontSize:15,
+    marginBottom: 10,
+    color: 'white',
+    fontSize: 15,
   },
   HistoryContainer: {
     flexDirection: 'row',
@@ -245,7 +255,7 @@ const styles = StyleSheet.create({
   urlTitle1: {
     fontWeight: 'bold',
     color: 'white',
-    fontSize:20,
+    fontSize: 20,
   },
   url: {
     color: 'white',
@@ -254,15 +264,15 @@ const styles = StyleSheet.create({
   url1: {
     color: 'white',
     marginBottom: 5,
-    fontSize:15,
+    fontSize: 15,
   },
   title: {
     color: 'white',
-    marginBottom:10,
+    marginBottom: 10,
   },
   title1: {
     color: 'white',
-    marginBottom:10,
+    marginBottom: 10,
     fontSize: 15,
   },
   date: {
@@ -272,7 +282,7 @@ const styles = StyleSheet.create({
   date1: {
     color: 'gray',
     fontSize: 12,
-    marginBottom:25,
+    marginBottom: 25,
   },
   iconWrapper: {
     padding: 5,
@@ -283,12 +293,12 @@ const styles = StyleSheet.create({
   },
   optionsIcon1: {
     width: 15,
-    height: 15,    
+    height: 15,
     marginRight: 10,
   },
   optionsIcon11: {
     width: 10,
-    height: 10,    
+    height: 10,
     marginRight: 10,
   },
   optionsIcon2: {
