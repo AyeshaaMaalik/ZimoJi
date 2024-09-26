@@ -120,16 +120,16 @@ const DrawerNavigator = () => {
 
 const renderDrawerIcon = (focused, size, iconSource) => (
   <View style={styles.drawerItem}>
-    <Image
-      source={iconSource}
-      style={[styles.icon1, { width: size * 1.5, height: size * 1.5 }]} 
-    />
     {focused && (
       <Image
         source={require('../Assets/MenuSection.png')}
-        style={[styles.menuIcon, { width: size, height: size * 1.7 }]} 
+        style={[styles.menuIcon, { width: size, height: size * 1}]} 
       />
     )}
+    <Image
+      source={iconSource}
+      style={[styles.icon1, { width: size , height: size * 1.5 }]} 
+    />
   </View>
 );
 
@@ -138,12 +138,18 @@ const styles = StyleSheet.create({
     backgroundColor: '#000',
   },
   logoContainer: {
-    alignItems: 'flex-start',
-    paddingLeft: 25,
-  },
+    top: -10,
+    left: 0,
+    right: 0,
+    height: 70,
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginLeft:25,
+    position: 'relative', 
+    },
   logo: {
-    width: 120,
-    height: 120,
+    width: 80,
+    height: 80,
     resizeMode: 'contain',
   },
   icon: {
@@ -153,13 +159,14 @@ const styles = StyleSheet.create({
   },
   icon1: {
     resizeMode: 'contain',
-    width: 30,
-    height: 30,
+    width: 15,
+    height: 15,
+    marginLeft:20, 
   },
   menuIcon: {
-    width: 30,
-    height: 30,
     resizeMode: 'contain',
+    position: 'absolute', 
+    left: 0,
   },
   drawerItemsContainer: {},
   drawerItem: {
@@ -167,8 +174,8 @@ const styles = StyleSheet.create({
     alignItems: 'center', 
     justifyContent: 'flex-start',
     height: 40, 
-    width: 50, 
-    marginLeft: 10,
+    width: 30, 
+    marginLeft: -10,
   },
   footerSpacer: {
     flex: 1,
@@ -190,6 +197,8 @@ const styles = StyleSheet.create({
     fontSize: 10,
     fontWeight: '300',
     marginRight: 5,
+    letterSpacing: 1.7, 
+
   },
   footerText1: {
     color: '#fff',
@@ -197,6 +206,7 @@ const styles = StyleSheet.create({
     fontSize: 10,
     fontWeight: '300',
     marginBottom: 15,
+    letterSpacing: 1.7, 
   },
 });
 

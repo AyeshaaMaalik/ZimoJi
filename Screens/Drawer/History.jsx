@@ -123,7 +123,7 @@ const History = () => {
             <Text style={styles.sectionTitle}>{sectionKey}</Text>
             {groupedHistory[sectionKey].map((item) => {
               const { formattedDate } = formatDate(item.date);
-              const isQRCode = !item.url;
+              const isQRCode = !item.url; 
 
               return (
                 <View key={item.id} style={styles.historyItem}> 
@@ -131,7 +131,11 @@ const History = () => {
                   <View style={styles.historyContent}>
                     {isQRCode ? (
                       <View style={styles.qrCodeContainer}>
-                        <Text style={styles.qrCodeText}>QR CODE SCANNED TEXT</Text>
+                        <View style={styles.urlContainer}>
+                          <Image source={require('../Assets/Text.png')} style={styles.optionsIcon11} resizeMode="contain" />
+                          <Text style={styles.urlTitle}>TEXT</Text>
+                        </View>
+                        <Text style={styles.qrCodeText}>{item.scannedText}</Text>
                         <Text style={styles.title}>{item.title}</Text>
                         <Text style={styles.date}>{formattedDate}</Text>
                       </View>

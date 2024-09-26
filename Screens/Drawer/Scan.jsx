@@ -101,7 +101,12 @@ const Main = () => {
   const PermissionsPage = () => (
     <View style={styles.container1}>
       <Text style={styles.text1}>Camera permission is required to use this feature.</Text>
-      <Button title="Open Settings" onPress={() => Linking.openSettings()} />
+      <TouchableOpacity onPress={() => Linking.openSettings()}> 
+      <Image 
+        source={require('../Assets/CameraPermissions.png')} 
+        style={styles.image1} 
+      />
+      </TouchableOpacity>
     </View>
   );
 
@@ -151,7 +156,19 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    padding: 20,
     backgroundColor:'black',
+  },
+  text1: {
+    fontSize: 16,
+    marginBottom: 20,
+    textAlign: 'center',
+    colr:'white',
+  },
+  image1: {
+    width: 100, 
+    height: 100,
+    resizeMode: 'contain', 
   },
   camera: {
     width: '100%',
@@ -162,9 +179,6 @@ const styles = StyleSheet.create({
     bottom: 20,
     right: 20,
     alignItems: 'center',
-  },
-  text1:{
-    color:'black',
   },
   flipIcon: {
     width: 30,
