@@ -82,8 +82,8 @@ const Main = () => {
   };
 
   const PermissionsPage = () => (
-    <View style={styles.container}>
-      <Text style={styles.text}>Camera permission is required to use this feature.</Text>
+    <View style={styles.container1}>
+      <Text style={styles.text1}>Camera permission is required to use this feature.</Text>
       <Button title="Open Settings" onPress={() => Linking.openSettings()} />
     </View>
   );
@@ -130,6 +130,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  container1: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor:'black',
+  },
   camera: {
     width: '100%',
     height: '100%',
@@ -139,6 +145,9 @@ const styles = StyleSheet.create({
     bottom: 20,
     right: 20,
     alignItems: 'center',
+  },
+  text1:{
+    color:'black',
   },
   flipIcon: {
     width: 30,

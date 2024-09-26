@@ -48,7 +48,7 @@ const History = () => {
   const groupedHistory = historyData.reduce((acc, item) => {
     const { formattedDate, isToday, displayDate } = formatDate(item.date);
     if (formattedDate) {
-      const sectionKey = isToday ? 'Today' : displayDate; 
+      const sectionKey = isToday ? 'Today' : displayDate;
       if (!acc[sectionKey]) {
         acc[sectionKey] = [];
       }
@@ -89,6 +89,7 @@ const History = () => {
                 </View>
               );
             })}
+
           </View>
         ))}
       </ScrollView>
@@ -159,15 +160,14 @@ const styles = StyleSheet.create({
   urlTitle: {
     fontWeight: 'bold',
     color: 'white',
-    marginRight: 5, // Add space between title and icon
+    marginRight: 5,
   },
   urlIcon: {
     width: 20,
-    height: 20, // Adjust size as necessary
+    height: 20,
   },
   url: {
     color: 'white',
-    textDecorationLine: 'underline',
   },
   title: {
     color: 'white',
