@@ -1,7 +1,8 @@
 import { useNavigation, useRoute } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView, Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Clipboard from '@react-native-clipboard/clipboard';
 
 const History = () => {
   const navigation = useNavigation();
@@ -64,8 +65,14 @@ const History = () => {
     return acc;
   }, {});
 
+  const copyToClipboard = (text) => {
+    Clipboard.setString(text);
+    Alert.alert('Copied to Clipboard', 'The URL or text has been copied to the clipboard.');
+  };
+
   if (selectedHistoryItem) {
     const { formattedDate } = formatDate(selectedHistoryItem.date);
+    const isQRCode = !selectedHistoryItem.url;
 
     return (
       <View style={styles.container1}>
@@ -85,16 +92,27 @@ const History = () => {
             </View>
           </TouchableOpacity>
           <View style={styles.urlContainer1}>
-            <Image source={require('../Assets/download.png')} style={styles.optionsIcon1} resizeMode="contain" />
-            <Text style={styles.urlTitle1}>URL</Text>
+            <Image
+              source={isQRCode
+                ? require('../Assets/Text.png')
+                : require('../Assets/download.png')
+              }
+              style={styles.optionsIcon1}
+              resizeMode="contain"
+            />
+            <Text style={styles.urlTitle1}>{isQRCode ? 'TEXT' : 'URL'}</Text>
           </View>
-          <Text style={styles.urlContainer1}>{selectedHistoryItem.url}</Text>
+
+          <Text style={styles.urlContainer1}>{isQRCode ? selectedHistoryItem.scannedText : selectedHistoryItem.url}</Text>
           <Text style={styles.title1}>{selectedHistoryItem.title}</Text>
           <Text style={styles.date1}>{formattedDate}</Text>
+
           <View style={styles.bottomIcons}>
             <Image source={require('../Assets/Favourites.png')} style={styles.bottomIcon} resizeMode="contain" />
             <Image source={require('../Assets/Share.png')} style={styles.bottomIcon} resizeMode="contain" />
-            <Image source={require('../Assets/Copy.png')} style={styles.bottomIcon} resizeMode="contain" />
+            <TouchableOpacity onPress={() => copyToClipboard(isQRCode ? selectedHistoryItem.scannedText : selectedHistoryItem.url)}>
+              <Image source={require('../Assets/Copy.png')} style={styles.bottomIcon} resizeMode="contain" />
+            </TouchableOpacity>
             <TouchableOpacity onPress={() => deleteHistoryItem(selectedHistoryItem)}>
               <Image source={require('../Assets/Delete.png')} style={styles.bottomIcon} resizeMode="contain" />
             </TouchableOpacity>
@@ -103,6 +121,8 @@ const History = () => {
       </View>
     );
   }
+
+
 
   return (
     <View style={styles.container}>
@@ -123,10 +143,9 @@ const History = () => {
             <Text style={styles.sectionTitle}>{sectionKey}</Text>
             {groupedHistory[sectionKey].map((item) => {
               const { formattedDate } = formatDate(item.date);
-              const isQRCode = !item.url; 
-
+              const isQRCode = !item.url;
               return (
-                <View key={item.id} style={styles.historyItem}> 
+                <View key={item.id} style={styles.historyItem}>
                   <Image source={require('../Assets/MenuSection.png')} style={styles.historyIcon} resizeMode="contain" />
                   <View style={styles.historyContent}>
                     {isQRCode ? (
@@ -163,8 +182,6 @@ const History = () => {
     </View>
   );
 };
-
-
 
 const styles = StyleSheet.create({
   container: {
@@ -264,14 +281,15 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   urlTitle: {
-    fontWeight: 'bold',
+    fontWeight: '400',
     color: 'white',
     marginRight: 5,
+    fontSize: 13,
   },
   urlTitle1: {
-    fontWeight: 'bold',
+    fontWeight: '400',
     color: 'white',
-    fontSize: 20,
+    fontSize: 15,
   },
   url: {
     color: 'white',
@@ -308,8 +326,8 @@ const styles = StyleSheet.create({
     height: 30,
   },
   optionsIcon1: {
-    width: 15,
-    height: 15,
+    width: 13,
+    height: 13,
     marginRight: 10,
   },
   optionsIcon11: {

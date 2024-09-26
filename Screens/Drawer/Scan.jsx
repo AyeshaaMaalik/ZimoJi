@@ -163,7 +163,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginBottom: 20,
     textAlign: 'center',
-    colr:'white',
+    color:'white',
   },
   image1: {
     width: 100, 
