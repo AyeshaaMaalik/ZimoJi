@@ -18,44 +18,61 @@ const Main = () => {
       if (isNavigating) {
         return; 
       }
-
+  
       if (codes.length > 0) {
         const scannedCode = codes[0];
-        const url = scannedCode?.value;
-
-        if (url && typeof url === 'string' && url.startsWith('http')) {
-          console.log(`Navigating to: ${url}`);
+        const scannedText = scannedCode?.value; 
+  
+        if (scannedText) {
+          console.log(`Scanned text: ${scannedText}`);
           setIsNavigating(true); 
-          
           const currentDate = new Date();
           const formattedDate = currentDate.toISOString(); 
-
-          setHistory(prevHistory => [
-            ...prevHistory,
-            { id: prevHistory.length + 1, date: formattedDate, url, title: 'Scanned QR Code' }
-          ]);
-
-          setTimeout(() => {
-            navigation.navigate('HISTORY', { history: [...history, { date: formattedDate, url, title: 'Scanned QR Code' }] });
-            setIsNavigating(false); 
-          }, 1000);
           
-          Linking.openURL(url)
-            .then(() => {
-              ToastAndroid.show("Navigating to URL...", ToastAndroid.SHORT);
-            })
-            .catch(err => {
-              console.error("Failed to open URL:", err);
-              ToastAndroid.show("Failed to open URL", ToastAndroid.SHORT);
+          if (scannedText.startsWith('http')) {
+            const historyEntry = {
+              id: history.length + 1,
+              date: formattedDate,
+              url: scannedText,
+              title: 'URL Scanned'
+            };
+            
+            Linking.openURL(scannedText)
+              .then(() => {
+                ToastAndroid.show("Navigating to URL...", ToastAndroid.SHORT);
+              })
+              .catch(err => {
+                console.error("Failed to open URL:", err);
+                ToastAndroid.show("Failed to open URL", ToastAndroid.SHORT);
+              });
+  
+            setHistory(prevHistory => [...prevHistory, historyEntry]);
+            setTimeout(() => {
+              navigation.navigate('HISTORY', { history: [...history, historyEntry] });
               setIsNavigating(false);
-            });
-        } else {
-          Alert.alert("Scanned code is not a valid URL:", url);
-          ToastAndroid.show("Invalid code scanned. Please try again.", ToastAndroid.SHORT);
+            }, 1000);
+          } else {
+            const textHistoryEntry = {
+              id: history.length + 1,
+              date: formattedDate,
+              scannedText: scannedText,
+              title: 'Text Scanned'
+            };
+            
+            Alert.alert("Scanned text:", scannedText);
+            ToastAndroid.show("Scanned text added to history.", ToastAndroid.SHORT);
+            
+            setHistory(prevHistory => [...prevHistory, textHistoryEntry]);
+            setTimeout(() => {
+              navigation.navigate('HISTORY', { history: [...history, textHistoryEntry] });
+              setIsNavigating(false);
+            }, 1000);
+          }
         }
       }
     }
   });
+  
 
   useEffect(() => {
     const requestCameraPermission = async () => {

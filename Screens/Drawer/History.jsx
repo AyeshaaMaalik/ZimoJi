@@ -46,11 +46,9 @@ const History = () => {
     };
   };
 
-
   const deleteHistoryItem = async (itemToDelete) => {
     const updatedHistory = historyData.filter(item => item.id !== itemToDelete.id);
     setHistoryData(updatedHistory);
-
     setSelectedHistoryItem(null);
   };
 
@@ -125,17 +123,33 @@ const History = () => {
             <Text style={styles.sectionTitle}>{sectionKey}</Text>
             {groupedHistory[sectionKey].map((item) => {
               const { formattedDate } = formatDate(item.date);
+              const isQRCode = !item.url; 
+
               return (
                 <View key={item.id} style={styles.historyItem}> 
                   <Image source={require('../Assets/MenuSection.png')} style={styles.historyIcon} resizeMode="contain" />
                   <View style={styles.historyContent}>
-                    <View style={styles.urlContainer}>
-                      <Image source={require('../Assets/download.png')} style={styles.optionsIcon11} resizeMode="contain" />
-                      <Text style={styles.urlTitle}>URL</Text>
-                    </View>
-                    <Text style={styles.url}>{item.url}</Text>
-                    <Text style={styles.title}>{item.title}</Text>
-                    <Text style={styles.date}>{formattedDate}</Text>
+                    {isQRCode ? (
+                      <View style={styles.qrCodeContainer}>
+                        <View style={styles.urlContainer}>
+                          <Image source={require('../Assets/Text.png')} style={styles.optionsIcon11} resizeMode="contain" />
+                          <Text style={styles.urlTitle}>TEXT</Text>
+                        </View>
+                        <Text style={styles.qrCodeText}>{item.scannedText}</Text>
+                        <Text style={styles.title}>{item.title}</Text>
+                        <Text style={styles.date}>{formattedDate}</Text>
+                      </View>
+                    ) : (
+                      <>
+                        <View style={styles.urlContainer}>
+                          <Image source={require('../Assets/download.png')} style={styles.optionsIcon11} resizeMode="contain" />
+                          <Text style={styles.urlTitle}>URL</Text>
+                        </View>
+                        <Text style={styles.url}>{item.url}</Text>
+                        <Text style={styles.title}>{item.title}</Text>
+                        <Text style={styles.date}>{formattedDate}</Text>
+                      </>
+                    )}
                   </View>
                   <TouchableOpacity style={styles.iconWrapper} onPress={() => setSelectedHistoryItem(item)}>
                     <Image source={require('../Assets/Option.png')} style={styles.optionsIcon} resizeMode="contain" />
@@ -149,6 +163,8 @@ const History = () => {
     </View>
   );
 };
+
+
 
 const styles = StyleSheet.create({
   container: {
@@ -325,6 +341,16 @@ const styles = StyleSheet.create({
     width: 20,
     height: 30,
     marginHorizontal: 15,
+  },
+  qrCodeContainer: {
+    backgroundColor: 'black',
+    padding: 10,
+    borderRadius: 8,
+    marginBottom: 10,
+  },
+  qrCodeText: {
+    color: 'white',
+    fontWeight: 'bold',
   },
 });
 
