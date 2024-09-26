@@ -7,6 +7,7 @@ const History = () => {
   const navigation = useNavigation();
   const route = useRoute();
   const [historyData, setHistoryData] = useState([]);
+  const [selectedHistoryItem, setSelectedHistoryItem] = useState(null);
 
   useEffect(() => {
     const loadHistoryData = async () => {
@@ -57,6 +58,44 @@ const History = () => {
     return acc;
   }, {});
 
+  if (selectedHistoryItem) {
+    const { formattedDate } = formatDate(selectedHistoryItem.date);
+
+    return (
+      <View style={styles.container1}>
+        <View style={styles.header}>
+          <TouchableOpacity onPress={() => navigation.openDrawer()}>
+            <Image source={require('../Assets/Menu.png')} style={styles.icon1} resizeMode="contain" />
+          </TouchableOpacity>
+          <Image source={require('../Assets/SplashWhite.png')} style={styles.icon2} resizeMode="contain" />
+          <View style={styles.placeholder} />
+        </View>
+
+        <View style={styles.singleHistoryContainer}>
+          <TouchableOpacity onPress={() => setSelectedHistoryItem(null)}>
+            <View style={styles.HistoryContainer}>
+              <Image source={require('../Assets/History.png')} style={styles.optionsIcon2} resizeMode="contain" />
+              <Text style={styles.HistoryTitle}>HISTORY</Text>
+            </View>
+          </TouchableOpacity>
+          <View style={styles.urlContainer1}>
+            <Image source={require('../Assets/download.png')} style={styles.optionsIcon1} resizeMode="contain" />
+            <Text style={styles.urlTitle1}>URL</Text>
+          </View>
+          <Text style={styles.urlContainer1}>{selectedHistoryItem.url}</Text>
+          <Text style={styles.title1}>{selectedHistoryItem.title}</Text>
+          <Text style={styles.date1}>{formattedDate}</Text>
+          <View style={styles.bottomIcons}>
+            <Image source={require('../Assets/Favourites.png')} style={styles.bottomIcon} resizeMode="contain" />
+            <Image source={require('../Assets/Share.png')} style={styles.bottomIcon} resizeMode="contain" />
+            <Image source={require('../Assets/Copy.png')} style={styles.bottomIcon} resizeMode="contain" />
+            <Image source={require('../Assets/Delete.png')} style={styles.bottomIcon} resizeMode="contain" />
+          </View>
+        </View>
+      </View>
+    );
+  }
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -69,6 +108,10 @@ const History = () => {
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         {Object.keys(groupedHistory).map((sectionKey) => (
           <View key={sectionKey} style={styles.historyContainer}>
+            <View style={styles.HistoryContainer}>
+              <Image source={require('../Assets/History.png')} style={styles.optionsIcon2} resizeMode="contain" />
+              <Text style={styles.HistoryTitle}>HISTORY</Text>
+            </View>
             <Text style={styles.sectionTitle}>{sectionKey}</Text>
             {groupedHistory[sectionKey].map((item) => {
               const { formattedDate } = formatDate(item.date);
@@ -77,19 +120,19 @@ const History = () => {
                   <Image source={require('../Assets/MenuSection.png')} style={styles.historyIcon} resizeMode="contain" />
                   <View style={styles.historyContent}>
                     <View style={styles.urlContainer}>
+                      <Image source={require('../Assets/download.png')} style={styles.optionsIcon11} resizeMode="contain" />
                       <Text style={styles.urlTitle}>URL</Text>
                     </View>
                     <Text style={styles.url}>{item.url}</Text>
                     <Text style={styles.title}>{item.title}</Text>
                     <Text style={styles.date}>{formattedDate}</Text>
                   </View>
-                  <TouchableOpacity style={styles.iconWrapper}>
+                  <TouchableOpacity style={styles.iconWrapper} onPress={() => setSelectedHistoryItem(item)}>
                     <Image source={require('../Assets/Option.png')} style={styles.optionsIcon} resizeMode="contain" />
                   </TouchableOpacity>
                 </View>
               );
             })}
-
           </View>
         ))}
       </ScrollView>
@@ -99,6 +142,11 @@ const History = () => {
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
+    backgroundColor: 'black',
+    paddingTop: 70,
+  },
+  container1: {
     flex: 1,
     backgroundColor: 'black',
     paddingTop: 70,
@@ -156,25 +204,75 @@ const styles = StyleSheet.create({
   urlContainer: {
     flexDirection: 'row',
     alignItems: 'center',
+    backgroundColor: 'black',
+    borderRadius: 8,
+    marginBottom:10,
+    color:'white',
+  },
+  urlContainer1: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'black',
+    marginBottom:10,
+    color:'white',
+    fontSize:15,
+  },
+  HistoryContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'black',
+    borderRadius: 8,
+  },
+  HistoryTitle: {
+    fontWeight: 'bold',
+    color: 'white',
+    marginRight: 5,
+    fontSize: 20,
+    marginBottom: 20,
+  },
+  HistoryTitle1: {
+    fontWeight: 'bold',
+    color: 'white',
+    marginRight: 5,
+    fontSize: 25,
+    marginBottom: 20,
   },
   urlTitle: {
     fontWeight: 'bold',
     color: 'white',
     marginRight: 5,
   },
-  urlIcon: {
-    width: 20,
-    height: 20,
+  urlTitle1: {
+    fontWeight: 'bold',
+    color: 'white',
+    fontSize:20,
   },
   url: {
     color: 'white',
+    marginBottom: 3,
+  },
+  url1: {
+    color: 'white',
+    marginBottom: 5,
+    fontSize:15,
   },
   title: {
     color: 'white',
+    marginBottom:10,
+  },
+  title1: {
+    color: 'white',
+    marginBottom:10,
+    fontSize: 15,
   },
   date: {
     color: 'gray',
     fontSize: 12,
+  },
+  date1: {
+    color: 'gray',
+    fontSize: 12,
+    marginBottom:25,
   },
   iconWrapper: {
     padding: 5,
@@ -182,6 +280,41 @@ const styles = StyleSheet.create({
   optionsIcon: {
     width: 30,
     height: 30,
+  },
+  optionsIcon1: {
+    width: 15,
+    height: 15,    
+    marginRight: 10,
+  },
+  optionsIcon11: {
+    width: 10,
+    height: 10,    
+    marginRight: 10,
+  },
+  optionsIcon2: {
+    width: 30,
+    height: 30,
+    marginRight: 20,
+    marginBottom: 20,
+  },
+  singleHistoryContainer: {
+    padding: 20,
+  },
+  backText: {
+    color: 'white',
+    marginBottom: 20,
+    fontSize: 16,
+  },
+  bottomIcons: {
+    position: 'absolute',
+    bottom: -15,
+    left: 10,
+    flexDirection: 'row',
+  },
+  bottomIcon: {
+    width: 20,
+    height: 30,
+    marginHorizontal: 15,
   },
 });
 
