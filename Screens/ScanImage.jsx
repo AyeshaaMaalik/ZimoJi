@@ -1,13 +1,28 @@
 import { useNavigation } from '@react-navigation/native';
 import React, { useState } from 'react';
-import { View, Text, Image, Alert, StyleSheet, TouchableOpacity, Linking } from 'react-native';
+import { View, Text, Image, Alert, StyleSheet, TouchableOpacity, Linking , PermissionsAndroid} from 'react-native';
 import DocumentPicker from 'react-native-document-picker';
-import RNQRGenerator from 'rn-qr-generator';
+import { PERMISSIONS, request } from 'react-native-permissions';
+import ml from '@react-native-firebase/ml';
 
 const ScanImage = () => {  
   const [selectedImage, setSelectedImage] = useState(null);
   const [qrCodeData, setQRCodeData] = useState('');
   const navigation = useNavigation();
+
+  const requestStoragePermission = async () => {
+    try {
+      const granted = await request(PERMISSIONS.ANDROID.READ_EXTERNAL_STORAGE);
+      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+        console.log('Storage permission granted');
+        pickImage();
+      } else {
+        Alert.alert('Permission Denied', 'You need to give storage permission to pick an image.');
+      }
+    } catch (err) {
+      console.warn(err);
+    }
+  };
 
   const pickImage = async () => {
     try {
@@ -29,21 +44,20 @@ const ScanImage = () => {
     }
   };
 
-  const scanQRCode = (imageUri) => {
-    RNQRGenerator.detect({ uri: imageUri })
-      .then((response) => {
-        const { values } = response;
-        if (values.length > 0) {
-          setQRCodeData(values[0]);
-          Alert.alert('QR Code Found', values[0]);
-        } else {
-          Alert.alert('No QR Code Found', 'No QR code was detected in the image.');
-        }
-      })
-      .catch((error) => {
-        console.log('QR code detection failed:', error);
-        Alert.alert('Error', 'Could not scan the image for a QR code.');
-      });
+  const scanQRCode = async (imageUri) => {
+    try {
+      const processed = await ml().cloudDocumentTextRecognizerProcessImage(imageUri);
+      if (processed && processed.blocks.length > 0) {
+        const qrCodeText = processed.blocks[0].text;
+        setQRCodeData(qrCodeText);
+        Alert.alert('QR Code Found', qrCodeText);
+      } else {
+        Alert.alert('No QR Code Found', 'No QR code was detected in the image.');
+      }
+    } catch (error) {
+      console.error('QR code detection failed:', error);
+      Alert.alert('Error', 'Could not scan the image for a QR code.');
+    }
   };
 
   const handlePressQRCodeData = () => {
@@ -57,18 +71,17 @@ const ScanImage = () => {
 
   return (
     <View style={styles.container}>
-      
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.openDrawer()}>
           <Image
-            source={require('../Assets/Menu.png')}
+            source={require('./Assets/Menu.png')}
             style={styles.icon1}
             resizeMode="contain"
           />
         </TouchableOpacity>
         <View style={styles.centerIconContainer}>
           <Image
-            source={require('../Assets/SplashWhite.png')}
+            source={require('./Assets/SplashWhite.png')}
             style={styles.icon2}
             resizeMode="contain"
           />
@@ -77,9 +90,9 @@ const ScanImage = () => {
       
       <Text style={styles.heading}>SELECT PICTURE FOR SCANNING</Text>
       
-      <TouchableOpacity onPress={pickImage}>
+      <TouchableOpacity onPress={requestStoragePermission}>
         <Image 
-          source={require('../Assets/ScanImage.png')} 
+          source={require('./Assets/ScanImage.png')} 
           style={styles.icon}
         />
       </TouchableOpacity>
