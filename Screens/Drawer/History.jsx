@@ -1,6 +1,6 @@
 import { useNavigation, useRoute } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView, Alert } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView, Alert , Share} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Clipboard from '@react-native-clipboard/clipboard';
 
@@ -9,6 +9,7 @@ const History = () => {
   const route = useRoute();
   const [historyData, setHistoryData] = useState([]);
   const [selectedHistoryItem, setSelectedHistoryItem] = useState(null);
+  const [isFavourite, setIsFavourite] = useState(false); 
 
   useEffect(() => {
     const loadHistoryData = async () => {
@@ -70,6 +71,29 @@ const History = () => {
     Alert.alert('Copied to Clipboard', 'The URL or text has been copied to the clipboard.');
   };
 
+
+
+  const shareContent = async (content) => {
+    try {
+      const result = await Share.share({
+        message: content,
+      });
+      if (result.action === Share.sharedAction) {
+        if (result.activityType) {
+        } else {
+        }
+      } else if (result.action === Share.dismissedAction) {
+      }
+    } catch (error) {
+      Alert.alert('Error', 'Failed to share the content.');
+    }
+  };
+  
+  const handleFavouritePress = () => {
+    setIsFavourite(!isFavourite); 
+    navigation.navigate('FAVOURITES'); 
+  };
+
   if (selectedHistoryItem) {
     const { formattedDate } = formatDate(selectedHistoryItem.date);
     const isQRCode = !selectedHistoryItem.url;
@@ -108,8 +132,19 @@ const History = () => {
           <Text style={styles.date1}>{formattedDate}</Text>
 
           <View style={styles.bottomIcons}>
-            <Image source={require('../Assets/Favourites.png')} style={styles.bottomIcon} resizeMode="contain" />
-            <Image source={require('../Assets/Share.png')} style={styles.bottomIcon} resizeMode="contain" />
+          <TouchableOpacity onPress={handleFavouritePress}>
+              <Image
+                source={require('../Assets/Favourites.png')}
+                style={[
+                  styles.bottomIcon,
+                  { tintColor: isFavourite ? '#8D0000' : 'white' }, 
+                ]}
+                resizeMode="contain"
+              />
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => shareContent(isQRCode ? selectedHistoryItem.scannedText : selectedHistoryItem.url)}>
+              <Image source={require('../Assets/Share.png')} style={styles.bottomIcon} resizeMode="contain" />
+            </TouchableOpacity>
             <TouchableOpacity onPress={() => copyToClipboard(isQRCode ? selectedHistoryItem.scannedText : selectedHistoryItem.url)}>
               <Image source={require('../Assets/Copy.png')} style={styles.bottomIcon} resizeMode="contain" />
             </TouchableOpacity>
