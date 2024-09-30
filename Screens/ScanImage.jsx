@@ -1,8 +1,10 @@
 import { useNavigation } from '@react-navigation/native';
 import React, { useState } from 'react';
-import { View, Text, Image, Alert, StyleSheet, TouchableOpacity, Linking, PermissionsAndroid } from 'react-native';
+import { View, Text, Image, Alert, StyleSheet, TouchableOpacity, ToastAndroid } from 'react-native';
 import DocumentPicker from 'react-native-document-picker';
 import RNQRGenerator from 'rn-qr-generator';
+import { readFile } from 'react-native-fs'; 
+import { Linking } from 'react-native'; 
 
 const ScanImage = () => {
   const [selectedImage, setSelectedImage] = useState(null);
@@ -19,7 +21,7 @@ const ScanImage = () => {
         const fileUri = result[0].uri;
         setSelectedImage(fileUri);
         
-        scanQRCode(fileUri);
+        scanImage(fileUri); 
       }
     } catch (err) {
       if (DocumentPicker.isCancel(err)) {
@@ -30,21 +32,35 @@ const ScanImage = () => {
     }
   };
 
-  const scanQRCode = (imageUri) => {
-    RNQRGenerator.detect({ uri: imageUri })
-      .then((response) => {
-        const { values } = response;
-        if (values.length > 0) {
-          setQRCodeData(values[0]); 
-          Alert.alert('QR Code Found', values[0]);
+  const scanImage = async (uri) => {
+    try {
+      // Convert image to base64
+      const base64Image = await readFile(uri, 'base64');
+      console.log('Base64 Image String:', base64Image); 
+
+      // Detect QR code
+      const response = await RNQRGenerator.detect({ base64: base64Image });
+
+      console.log('QR Detection Response:', response);
+      if (response.values && response.values.length > 0) {
+        const detectedValue = response.values[0];
+        setQRCodeData(detectedValue);
+        Alert.alert('QR Code Found', detectedValue);
+        
+        if (detectedValue.startsWith('http://') || detectedValue.startsWith('https://')) {
+          Linking.openURL(detectedValue).catch(err => {
+            console.error('Failed to open URL:', err);
+          });
         } else {
-          Alert.alert('No QR Code Found', 'No QR code was detected in the image.');
+          ToastAndroid.show(`Detected: ${detectedValue}`, ToastAndroid.SHORT);
         }
-      })
-      .catch((error) => {
-        console.log('QR code detection failed:', error);
-        Alert.alert('Error', 'Could not scan the image for a QR code.');
-      });
+      } else {
+        ToastAndroid.show("No QR code found.", ToastAndroid.SHORT);
+      }
+    } catch (error) {
+      console.error('QR code detection failed:', error);
+      ToastAndroid.show("Failed to detect QR code.", ToastAndroid.SHORT);
+    }
   };
 
   return (
@@ -65,12 +81,12 @@ const ScanImage = () => {
           />
         </View>
       </View>
-      
+
       <Text style={styles.heading}>SELECT PICTURE FOR SCANNING</Text>
-      
+
       <TouchableOpacity onPress={pickImage}>
-        <Image 
-          source={require('./Assets/ScanImage.png')} 
+        <Image
+          source={require('./Assets/ScanImage.png')}
           style={styles.icon}
         />
       </TouchableOpacity>
@@ -78,11 +94,9 @@ const ScanImage = () => {
       {selectedImage && (
         <>
           <Image source={{ uri: selectedImage }} style={styles.image} />
-          <TouchableOpacity onPress={scanQRCode}>
-            <Text style={styles.qrCodeText}>
-              QR Code Data: {qrCodeData || 'N/A'}
-            </Text>
-          </TouchableOpacity>
+          <Text style={styles.qrCodeText}>
+            QR Code Data: {qrCodeData || 'N/A'}
+          </Text>
         </>
       )}
     </View>
