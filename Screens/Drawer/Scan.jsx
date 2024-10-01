@@ -1,43 +1,46 @@
-import { useNavigation } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, View, Text, Button, Linking, Image, TouchableOpacity, Alert, ToastAndroid } from 'react-native';
+import { View, StyleSheet, Alert, Image, TouchableOpacity, ToastAndroid } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Camera, useCameraDevice, useCameraPermission, useCodeScanner } from 'react-native-vision-camera';
+import { useNavigation } from '@react-navigation/native';
 import CameraPermission from './CameraPermission';
+import CameraPermission2 from './CameraPermission2';
 
 const Main = () => {
   const [isFrontCamera, setIsFrontCamera] = useState(false);
-  const device = useCameraDevice(isFrontCamera ? 'front' : 'back');
   const { hasPermission, requestPermission } = useCameraPermission();
+  const [launchCount, setLaunchCount] = useState(0);
   const navigation = useNavigation();
+  const device = useCameraDevice(isFrontCamera ? 'front' : 'back');
   const [flashOn, setFlashOn] = useState(false);
-  const [isNavigating, setIsNavigating] = useState(false); 
-  const [history, setHistory] = useState([]); 
+  const [isNavigating, setIsNavigating] = useState(false);
+  const [history, setHistory] = useState([]);
 
   const codeScanner = useCodeScanner({
     codeTypes: ['qr', 'ean-13'],
     onCodeScanned: (codes) => {
       if (isNavigating) {
-        return; 
+        return;
       }
-  
+
       if (codes.length > 0) {
         const scannedCode = codes[0];
-        const scannedText = scannedCode?.value; 
-  
+        const scannedText = scannedCode?.value;
+
         if (scannedText) {
           console.log(`Scanned text: ${scannedText}`);
-          setIsNavigating(true); 
+          setIsNavigating(true);
           const currentDate = new Date();
-          const formattedDate = currentDate.toISOString(); 
-          
+          const formattedDate = currentDate.toISOString();
+
           if (scannedText.startsWith('http')) {
             const historyEntry = {
               id: history.length + 1,
               date: formattedDate,
               url: scannedText,
-              title: 'URL Scanned'
+              title: 'URL Scanned',
             };
-            
+
             Linking.openURL(scannedText)
               .then(() => {
                 ToastAndroid.show("Navigating to URL...", ToastAndroid.SHORT);
@@ -46,7 +49,7 @@ const Main = () => {
                 console.error("Failed to open URL:", err);
                 ToastAndroid.show("Failed to open URL", ToastAndroid.SHORT);
               });
-  
+
             setHistory(prevHistory => [...prevHistory, historyEntry]);
             setTimeout(() => {
               navigation.navigate('HISTORY', { history: [...history, historyEntry] });
@@ -57,12 +60,12 @@ const Main = () => {
               id: history.length + 1,
               date: formattedDate,
               scannedText: scannedText,
-              title: 'Text Scanned'
+              title: 'Text Scanned',
             };
-            
+
             Alert.alert("Scanned text:", scannedText);
             ToastAndroid.show("Scanned text added to history.", ToastAndroid.SHORT);
-            
+
             setHistory(prevHistory => [...prevHistory, textHistoryEntry]);
             setTimeout(() => {
               navigation.navigate('HISTORY', { history: [...history, textHistoryEntry] });
@@ -71,10 +74,24 @@ const Main = () => {
           }
         }
       }
-    }
+    },
   });
-  
 
+  useEffect(() => {
+    const checkLaunchCount = async () => {
+      try {
+        const count = await AsyncStorage.getItem('cameraLaunchCount');
+        const parsedCount = count ? parseInt(count, 10) : 0;
+        const newCount = parsedCount + 1;
+        setLaunchCount(newCount);
+        await AsyncStorage.setItem('cameraLaunchCount', newCount.toString());
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    checkLaunchCount();
+  }, []);
 
   const toggleTorch = async () => {
     if (device?.torchAvailable) {
@@ -97,7 +114,14 @@ const Main = () => {
     </View>
   );
 
-  if (!hasPermission) return <CameraPermission/>;
+  if (!hasPermission) {
+    if (launchCount % 2 === 1) {
+      return <CameraPermission2 />; 
+    } else {
+      return <CameraPermission />; 
+    }
+  }
+
   if (device == null) return <NoCameraDeviceError />;
 
   return (
@@ -133,37 +157,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  container1: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 20,
-    backgroundColor:'black',
-  },
-  text1: {
-    fontSize: 16,
-    marginBottom: 20,
-    textAlign: 'center',
-    color:'white',
-  },
-  image1: {
-    width: 100, 
-    height: 100,
-    resizeMode: 'contain', 
-  },
   camera: {
     width: '100%',
     height: '100%',
-  },
-  flipContainer: {
-    position: 'absolute',
-    bottom: 20,
-    right: 20,
-    alignItems: 'center',
-  },
-  flipIcon: {
-    width: 30,
-    height: 30,
   },
   header: {
     position: 'absolute',
@@ -186,6 +182,16 @@ const styles = StyleSheet.create({
     height: 80,
   },
   icon3: {
+    width: 30,
+    height: 30,
+  },
+  flipContainer: {
+    position: 'absolute',
+    bottom: 20,
+    right: 20,
+    alignItems: 'center',
+  },
+  flipIcon: {
     width: 30,
     height: 30,
   },

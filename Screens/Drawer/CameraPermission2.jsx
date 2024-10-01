@@ -2,8 +2,9 @@ import { useNavigation } from '@react-navigation/native';
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Image, PermissionsAndroid, Platform, Alert } from 'react-native';
 
-const CameraPermission = () => {
+const CameraPermission2 = () => {
     const navigation = useNavigation();
+
     const requestCameraPermission = async () => {
         if (Platform.OS === 'android') {
             try {
@@ -22,6 +23,7 @@ const CameraPermission = () => {
                     navigation.navigate('SCAN'); 
                 } else {
                     console.log("Camera permission denied");
+                    handleCancel(); 
                 }
             } catch (err) {
                 console.warn(err);
@@ -31,6 +33,7 @@ const CameraPermission = () => {
             navigation.navigate('SCAN'); 
         }
     };
+
     const handleCancel = () => {
         Alert.alert(
             "Permission Required",
@@ -42,11 +45,11 @@ const CameraPermission = () => {
     return (
         <View style={styles.container}>
             <Image
-                source={require('../Assets/SplashWhite.png')}
+                source={require('../Assets/SplashBlack.png')}
                 style={styles.logo}
             />
             <Image
-                source={require('../Assets/CameraPermissions.png')}
+                source={require('../Assets/output-onlinepngtools.png')}
                 style={styles.icon}
             />
             <Text style={styles.title}>CAMERA ACCESS IS REQUIRED</Text>
@@ -60,7 +63,7 @@ const CameraPermission = () => {
                 <Text style={styles.bold}>PERMISSIONS </Text> TO ALLOW ZIMOJI SCANNING
             </Text>
             <Image
-                source={require('../Assets/Scan.png')}
+                source={require('../Assets/output-onlinepngtoolss.png')}
                 style={styles.qrIcon}
             />
             <Text style={styles.message}>
@@ -72,12 +75,16 @@ const CameraPermission = () => {
                 <TouchableOpacity
                     style={styles.button}
                     onPress={handleCancel} 
+                    accessibilityLabel="Cancel camera permission request"
+                    accessibilityHint="Dismisses the permission request"
                 >
                     <Text style={styles.buttonText}>CANCEL</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                     style={[styles.button, styles.confirmButton]}
                     onPress={requestCameraPermission} 
+                    accessibilityLabel="Confirm camera permission"
+                    accessibilityHint="Requests camera access"
                 >
                     <Text style={styles.buttonText}>CONFIRM</Text>
                 </TouchableOpacity>
@@ -86,7 +93,7 @@ const CameraPermission = () => {
                 You will be directed to the app permissions section
             </Text>
             <Image
-                source={require('../Assets/ZIMOWhite.png')}
+                source={require('../Assets/ZIMOBlack.png')}
                 style={styles.footerLogo}
             />
         </View>
@@ -98,7 +105,7 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'flex-start',
         alignItems: 'center',
-        backgroundColor: '#000',
+        backgroundColor: 'white',
     },
     logo: {
         width: 80,
@@ -114,13 +121,13 @@ const styles = StyleSheet.create({
     },
     title: {
         fontSize: 18,
-        color: '#fff',
+        color: 'black', 
         marginBottom: 30,
         letterSpacing: 1.3,
     },
     message: {
         fontSize: 12,
-        color: '#fff',
+        color: 'black', 
         fontWeight: '300',
         textAlign: 'center',
         marginBottom: 20,
@@ -139,26 +146,25 @@ const styles = StyleSheet.create({
     buttonContainer: {
         flexDirection: 'row',
         marginBottom: 20,
-        backgroundColor: 'black',
     },
     button: {
-        backgroundColor: 'black',
+        backgroundColor: 'white', 
         paddingVertical: 10,
         paddingHorizontal: 20,
         borderRadius: 5,
         marginHorizontal: 10,
     },
     confirmButton: {
-        backgroundColor: 'black',
+        backgroundColor: 'white', 
     },
     buttonText: {
-        color: '#fff',
+        color: 'black',
         fontSize: 16,
         letterSpacing: 1.7,
     },
     footerText: {
         fontSize: 12,
-        color: '#fff',
+        color: 'black', 
         fontWeight: '300',
         textAlign: 'center',
         marginBottom: 20,
@@ -171,4 +177,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default CameraPermission;
+export default CameraPermission2;
