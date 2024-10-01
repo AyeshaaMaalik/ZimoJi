@@ -34,11 +34,9 @@ const ScanImage = () => {
 
   const scanImage = async (uri) => {
     try {
-      // Convert image to base64
       const base64Image = await readFile(uri, 'base64');
-      console.log('Base64 Image String:', base64Image); 
+      //console.log('Base64 Image String:', base64Image); 
 
-      // Detect QR code
       const response = await RNQRGenerator.detect({ base64: base64Image });
 
       console.log('QR Detection Response:', response);

@@ -2,6 +2,7 @@ import { useNavigation } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, View, Text, Button, Linking, Image, TouchableOpacity, Alert, ToastAndroid } from 'react-native';
 import { Camera, useCameraDevice, useCameraPermission, useCodeScanner } from 'react-native-vision-camera';
+import CameraPermission from './CameraPermission';
 
 const Main = () => {
   const [isFrontCamera, setIsFrontCamera] = useState(false);
@@ -74,14 +75,6 @@ const Main = () => {
   });
   
 
-  useEffect(() => {
-    const requestCameraPermission = async () => {
-      if (!hasPermission) {
-        await requestPermission();
-      }
-    };
-    requestCameraPermission();
-  }, [hasPermission, requestPermission]);
 
   const toggleTorch = async () => {
     if (device?.torchAvailable) {
@@ -98,25 +91,13 @@ const Main = () => {
     setIsFrontCamera(prev => !prev);
   };
 
-  const PermissionsPage = () => (
-    <View style={styles.container1}>
-      <Text style={styles.text1}>Camera permission is required to use this feature.</Text>
-      <TouchableOpacity onPress={() => Linking.openSettings()}> 
-      <Image 
-        source={require('../Assets/CameraPermissions.png')} 
-        style={styles.image1} 
-      />
-      </TouchableOpacity>
-    </View>
-  );
-
   const NoCameraDeviceError = () => (
     <View style={styles.container}>
       <Text style={styles.text}>No camera device found.</Text>
     </View>
   );
 
-  if (!hasPermission) return <PermissionsPage />;
+  if (!hasPermission) return <CameraPermission/>;
   if (device == null) return <NoCameraDeviceError />;
 
   return (
