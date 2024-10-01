@@ -19,7 +19,7 @@ const CameraPermission = () => {
                 );
                 if (granted === PermissionsAndroid.RESULTS.GRANTED) {
                     console.log("Camera permission granted");
-                    navigation.navigate('SCAN'); 
+                    navigation.navigate('Main'); 
                 } else {
                     console.log("Camera permission denied");
                 }
@@ -28,7 +28,7 @@ const CameraPermission = () => {
             }
         } else {
             console.log("Camera permission request not implemented for this platform.");
-            navigation.navigate('SCAN'); 
+            navigation.navigate('Main'); 
         }
     };
     const handleCancel = () => {
