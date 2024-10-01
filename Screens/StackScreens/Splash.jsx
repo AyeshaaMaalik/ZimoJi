@@ -1,13 +1,36 @@
 import React, { useEffect } from 'react';
-import { View, Image, StyleSheet } from 'react-native';
+import { View, Image, StyleSheet, PermissionsAndroid, Platform } from 'react-native';
 
 const Splash = ({ navigation }) => {
   useEffect(() => {
-    const timer = setTimeout(() => {
-      navigation.replace('Main');
-    }, 2000);
+    const requestCameraPermission = async () => {
+      if (Platform.OS === 'android') {
+        try {
+          const granted = await PermissionsAndroid.request(
+            PermissionsAndroid.PERMISSIONS.CAMERA,
+            {
+              title: "Camera Permission",
+              message: "This app needs access to your camera to scan QR codes.",
+              buttonNeutral: "Ask Me Later",
+              buttonNegative: "Cancel",
+              buttonPositive: "OK"
+            }
+          );
 
-    return () => clearTimeout(timer);
+          if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+            console.log("Camera permission granted");
+            navigation.replace('Main');
+          } else {
+            console.log("Camera permission denied");
+            navigation.replace('Permission');
+          }
+        } catch (err) {
+          console.warn(err);
+        }
+      }
+    };
+
+    requestCameraPermission();
   }, [navigation]);
 
   return (
@@ -15,7 +38,7 @@ const Splash = ({ navigation }) => {
       <Image
         source={require('../Assets/SplashBlack.png')}
         style={styles.image}
-        resizeMode="contain" 
+        resizeMode="contain"
       />
     </View>
   );
@@ -29,8 +52,8 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
   },
   image: {
-    width: 150,  
-    height: 150, 
+    width: 150,
+    height: 150,
   },
 });
 

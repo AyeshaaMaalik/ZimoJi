@@ -13,9 +13,9 @@ const ThemeScreen = ({ navigation }) => {
                 await AsyncStorage.setItem('launchCount', newCount.toString());
 
                 if (newCount % 2 === 1) {
-                    navigation.navigate('Splash2');
+                    navigation.navigate('Splash');
                 } else {
-                    navigation.navigate('Splash'); 
+                    navigation.navigate('Splash2'); 
                 }
             } catch (error) {
                 console.error(error);

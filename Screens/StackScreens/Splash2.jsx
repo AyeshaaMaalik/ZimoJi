@@ -1,14 +1,38 @@
 import React, { useEffect } from 'react';
-import { View, Image, StyleSheet } from 'react-native';
+import { View, Image, StyleSheet , PermissionsAndroid, Platform} from 'react-native';
 
 const Splash2 = ({ navigation }) => {
   useEffect(() => {
-    const timer = setTimeout(() => {
-      navigation.replace('Main');
-    }, 2000);
+    const requestCameraPermission = async () => {
+      if (Platform.OS === 'android') {
+        try {
+          const granted = await PermissionsAndroid.request(
+            PermissionsAndroid.PERMISSIONS.CAMERA,
+            {
+              title: "Camera Permission",
+              message: "This app needs access to your camera to scan QR codes.",
+              buttonNeutral: "Ask Me Later",
+              buttonNegative: "Cancel",
+              buttonPositive: "OK"
+            }
+          );
 
-    return () => clearTimeout(timer);
+          if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+            console.log("Camera permission granted");
+            navigation.replace('Main');
+          } else {
+            console.log("Camera permission denied");
+            navigation.replace('Permission2');
+          }
+        } catch (err) {
+          console.warn(err);
+        }
+      }
+    };
+
+    requestCameraPermission();
   }, [navigation]);
+
 
   return (
     <View style={styles.container}>
