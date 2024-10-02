@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { View, Image, StyleSheet, PermissionsAndroid, Platform } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useSelector } from 'react-redux';
 
 const SplashScreen = ({ navigation }) => {
-  const [isBlackBackground, setIsBlackBackground] = useState(true); 
+  const isDay = useSelector(state => state.theme.isDay);
 
   useEffect(() => {
     const requestCameraPermission = async () => {
@@ -33,29 +33,14 @@ const SplashScreen = ({ navigation }) => {
       }
     };
 
-    const checkLaunchCount = async () => {
-      try {
-        const count = await AsyncStorage.getItem('launchCount');
-        const launchCount = count ? parseInt(count, 10) : 0;
-
-        const newCount = launchCount + 1; 
-        await AsyncStorage.setItem('launchCount', newCount.toString());
-
-        setIsBlackBackground(newCount % 2 === 1); 
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
-    checkLaunchCount();
-    requestCameraPermission(); 
+    requestCameraPermission();
 
   }, [navigation]);
 
   return (
-    <View style={[styles.container, { backgroundColor: isBlackBackground ? 'black' : 'white' }]}>
+    <View style={[styles.container, { backgroundColor: isDay ? 'white' : 'black' }]}>
       <Image
-        source={isBlackBackground ? require('../Assets/SplashWhite.png') : require('../Assets/SplashBlack.png')}
+        source={isDay ? require('../Assets/SplashBlack.png') : require('../Assets/SplashWhite.png')}
         style={styles.image}
         resizeMode="contain"
       />

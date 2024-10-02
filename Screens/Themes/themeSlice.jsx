@@ -6,11 +6,11 @@ const themeSlice = createSlice({
     isDay: true, 
   },
   reducers: {
-    toggleTheme(state) {
-      state.isDay = !state.isDay;
+    setDayTheme(state, action) {
+      state.isDay = action.payload;
     },
   },
 });
 
-export const { toggleTheme } = themeSlice.actions;
+export const { setDayTheme } = themeSlice.actions;
 export default themeSlice.reducer;

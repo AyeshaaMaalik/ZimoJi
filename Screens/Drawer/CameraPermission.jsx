@@ -1,9 +1,12 @@
+import { useSelector } from 'react-redux';
 import { useNavigation } from '@react-navigation/native';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Image, PermissionsAndroid, Platform, Alert } from 'react-native';
 
 const CameraPermission = () => {
     const navigation = useNavigation();
+    const isDay = useSelector(state => state.theme.isDay); // Use isDay from Redux store
+
     const requestCameraPermission = async () => {
         if (Platform.OS === 'android') {
             try {
@@ -19,7 +22,7 @@ const CameraPermission = () => {
                 );
                 if (granted === PermissionsAndroid.RESULTS.GRANTED) {
                     console.log("Camera permission granted");
-                    navigation.navigate('Main'); 
+                    navigation.navigate('Main');
                 } else {
                     console.log("Camera permission denied");
                 }
@@ -28,9 +31,10 @@ const CameraPermission = () => {
             }
         } else {
             console.log("Camera permission request not implemented for this platform.");
-            navigation.navigate('Main'); 
+            navigation.navigate('Main');
         }
     };
+
     const handleCancel = () => {
         Alert.alert(
             "Permission Required",
@@ -40,17 +44,19 @@ const CameraPermission = () => {
     };
 
     return (
-        <View style={styles.container}>
+        <View style={[styles.container, { backgroundColor: isDay ? 'white' : 'black' }]}>
             <Image
-                source={require('../Assets/SplashWhite.png')}
+                source={isDay ? require('../Assets/SplashBlack.png') : require('../Assets/SplashWhite.png')}
                 style={styles.logo}
+                resizeMode="contain"
             />
             <Image
-                source={require('../Assets/CameraPermissions.png')}
+                source={isDay ? require('../Assets/output-onlinepngtools.png') : require('../Assets/CameraPermissions.png')}
                 style={styles.icon}
+                resizeMode="contain"
             />
-            <Text style={styles.title}>CAMERA ACCESS IS REQUIRED</Text>
-            <Text style={styles.message}>
+            <Text style={[styles.title, { color: isDay ? '#000' : '#fff' }]}>CAMERA ACCESS IS REQUIRED</Text>
+            <Text style={[styles.message, { color: isDay ? '#000' : '#fff' }]}>
                 THIS APP NEEDS <Text style={styles.bold}>PERMISSION</Text> TO USE THE
                 {'\n\n'}
                 CAMERA FOR ZIMOJI SCANNING.
@@ -60,34 +66,37 @@ const CameraPermission = () => {
                 <Text style={styles.bold}>PERMISSIONS </Text> TO ALLOW ZIMOJI SCANNING
             </Text>
             <Image
-                source={require('../Assets/Scan.png')}
+                source={isDay ? require('../Assets/output-onlinepngtoolss.png') : require('../Assets/Scan.png')}
                 style={styles.qrIcon}
+                resizeMode="contain"
             />
-            <Text style={styles.message}>
+            <Text style={[styles.message, { color: isDay ? '#000' : '#fff' }]}>
                 GRANT CAMERA ACCESS TO ENABLE THE APP'S
                 {'\n\n'}
                 CAMERA FUNCTIONALITY AND SCAN ZIMOJI'S
             </Text>
-            <View style={styles.buttonContainer}>
+            <View style={[styles.buttonContainer, { backgroundColor: isDay ? 'white' : 'black' }]}>
                 <TouchableOpacity
-                    style={styles.button}
-                    onPress={handleCancel} 
+                    style={[styles.button, { backgroundColor: isDay ? 'white' : 'black' }]}
+                    onPress={handleCancel}
                 >
-                    <Text style={styles.buttonText}>CANCEL</Text>
+                    <Text style={[styles.buttonText, { color: isDay ? 'black' : '#fff' }]}>CANCEL</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
-                    style={[styles.button, styles.confirmButton]}
-                    onPress={requestCameraPermission} 
+                    style={[styles.button, styles.confirmButton, { backgroundColor: isDay ? 'white' : 'black' }]}
+                    onPress={requestCameraPermission}
                 >
-                    <Text style={styles.buttonText}>CONFIRM</Text>
+                    <Text style={[styles.buttonText, { color: isDay ? 'black' : '#fff' }]}>CONFIRM</Text>
                 </TouchableOpacity>
             </View>
-            <Text style={styles.footerText}>
+            <Text style={[styles.footerText, { color: isDay ? '#000' : '#fff' }]}>
                 You will be directed to the app permissions section
             </Text>
+            
             <Image
-                source={require('../Assets/ZIMOWhite.png')}
+                source={isDay ? require('../Assets/ZIMOBlack.png') : require('../Assets/ZIMOWhite.png')}
                 style={styles.footerLogo}
+                resizeMode="contain"
             />
         </View>
     );
@@ -98,7 +107,6 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'flex-start',
         alignItems: 'center',
-        backgroundColor: '#000',
     },
     logo: {
         width: 80,
@@ -114,13 +122,11 @@ const styles = StyleSheet.create({
     },
     title: {
         fontSize: 18,
-        color: '#fff',
         marginBottom: 30,
         letterSpacing: 1.3,
     },
     message: {
         fontSize: 12,
-        color: '#fff',
         fontWeight: '300',
         textAlign: 'center',
         marginBottom: 20,
@@ -158,7 +164,6 @@ const styles = StyleSheet.create({
     },
     footerText: {
         fontSize: 12,
-        color: '#fff',
         fontWeight: '300',
         textAlign: 'center',
         marginBottom: 20,

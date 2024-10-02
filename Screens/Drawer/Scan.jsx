@@ -4,7 +4,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Camera, useCameraDevice, useCameraPermission, useCodeScanner } from 'react-native-vision-camera';
 import { useNavigation } from '@react-navigation/native';
 import CameraPermission from './CameraPermission';
-import CameraPermission2 from './CameraPermission2';
 
 const Main = () => {
   const [isFrontCamera, setIsFrontCamera] = useState(false);
@@ -115,7 +114,7 @@ const Main = () => {
   );
 
   if (!hasPermission) {
-    <CameraPermission2 />
+    <CameraPermission />
   }
 
   if (device == null) return <NoCameraDeviceError />;
