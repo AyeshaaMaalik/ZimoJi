@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Image, StyleSheet, Text } from 'react-native';
 import { createDrawerNavigator, DrawerContentScrollView, DrawerItemList } from '@react-navigation/drawer';
 import Scan from './Scan';
-import ScanImage from '../ScanImage';
+import ScanImage from './ScanImage';
 import History from './History';
 import Favorites from './Favorites';
 import Contacts from './Contact';
