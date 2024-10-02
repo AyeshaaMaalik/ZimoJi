@@ -115,11 +115,7 @@ const Main = () => {
   );
 
   if (!hasPermission) {
-    if (launchCount % 2 === 1) {
-      return <CameraPermission2 />; 
-    } else {
-      return <CameraPermission />; 
-    }
+    <CameraPermission2 />
   }
 
   if (device == null) return <NoCameraDeviceError />;

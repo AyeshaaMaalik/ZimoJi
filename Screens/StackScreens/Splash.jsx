@@ -1,7 +1,10 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Image, StyleSheet, PermissionsAndroid, Platform } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const Splash = ({ navigation }) => {
+const SplashScreen = ({ navigation }) => {
+  const [isBlackBackground, setIsBlackBackground] = useState(true); 
+
   useEffect(() => {
     const requestCameraPermission = async () => {
       if (Platform.OS === 'android') {
@@ -13,7 +16,7 @@ const Splash = ({ navigation }) => {
               message: "This app needs access to your camera to scan QR codes.",
               buttonNeutral: "Ask Me Later",
               buttonNegative: "Cancel",
-              buttonPositive: "OK"
+              buttonPositive: "OK",
             }
           );
 
@@ -30,13 +33,29 @@ const Splash = ({ navigation }) => {
       }
     };
 
-    requestCameraPermission();
+    const checkLaunchCount = async () => {
+      try {
+        const count = await AsyncStorage.getItem('launchCount');
+        const launchCount = count ? parseInt(count, 10) : 0;
+
+        const newCount = launchCount + 1; 
+        await AsyncStorage.setItem('launchCount', newCount.toString());
+
+        setIsBlackBackground(newCount % 2 === 1); 
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    checkLaunchCount();
+    requestCameraPermission(); 
+
   }, [navigation]);
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: isBlackBackground ? 'black' : 'white' }]}>
       <Image
-        source={require('../Assets/SplashBlack.png')}
+        source={isBlackBackground ? require('../Assets/SplashWhite.png') : require('../Assets/SplashBlack.png')}
         style={styles.image}
         resizeMode="contain"
       />
@@ -49,12 +68,11 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'white',
   },
   image: {
-    width: 150,
-    height: 150,
+    width: 150, 
+    height: 150, 
   },
 });
 
-export default Splash;
+export default SplashScreen;
