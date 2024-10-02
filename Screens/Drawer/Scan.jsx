@@ -1,14 +1,13 @@
-import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, Alert, Image, TouchableOpacity, ToastAndroid } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import React, {  useState } from 'react';
+import { View, Alert, Image, TouchableOpacity, ToastAndroid } from 'react-native';
 import { Camera, useCameraDevice, useCameraPermission, useCodeScanner } from 'react-native-vision-camera';
 import { useNavigation } from '@react-navigation/native';
 import CameraPermission from './CameraPermission';
+import styles from '../Styles/ScanStyles';
 
-const Main = () => {
+const Scan = () => {
   const [isFrontCamera, setIsFrontCamera] = useState(false);
   const { hasPermission, requestPermission } = useCameraPermission();
-  const [launchCount, setLaunchCount] = useState(0);
   const navigation = useNavigation();
   const device = useCameraDevice(isFrontCamera ? 'front' : 'back');
   const [flashOn, setFlashOn] = useState(false);
@@ -76,21 +75,6 @@ const Main = () => {
     },
   });
 
-  useEffect(() => {
-    const checkLaunchCount = async () => {
-      try {
-        const count = await AsyncStorage.getItem('cameraLaunchCount');
-        const parsedCount = count ? parseInt(count, 10) : 0;
-        const newCount = parsedCount + 1;
-        setLaunchCount(newCount);
-        await AsyncStorage.setItem('cameraLaunchCount', newCount.toString());
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
-    checkLaunchCount();
-  }, []);
 
   const toggleTorch = async () => {
     if (device?.torchAvailable) {
@@ -146,50 +130,6 @@ const Main = () => {
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  camera: {
-    width: '100%',
-    height: '100%',
-  },
-  header: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    height: 70,
-    backgroundColor: 'rgba(0, 0, 0, 0)',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 10,
-  },
-  icon1: {
-    width: 30,
-    height: 30,
-  },
-  icon2: {
-    width: 80,
-    height: 80,
-  },
-  icon3: {
-    width: 30,
-    height: 30,
-  },
-  flipContainer: {
-    position: 'absolute',
-    bottom: 20,
-    right: 20,
-    alignItems: 'center',
-  },
-  flipIcon: {
-    width: 30,
-    height: 30,
-  },
-});
 
-export default Main;
+
+export default Scan;

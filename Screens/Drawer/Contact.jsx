@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
+import styles from '../Styles/ContactStyles';
 
 const Contacts = () => {
   return (
@@ -9,17 +10,5 @@ const Contacts = () => {
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  text: {
-    fontSize: 20,
-    color: 'black',
-
-  },
-});
 
 export default Contacts;

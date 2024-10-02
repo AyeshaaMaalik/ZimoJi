@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
-import { View, Image, StyleSheet, PermissionsAndroid, Platform } from 'react-native';
+import { View, Image, PermissionsAndroid, Platform } from 'react-native';
 import { useSelector } from 'react-redux';
+import styles from '../Styles/SplashStyles';
 
 const SplashScreen = ({ navigation }) => {
   const isDay = useSelector(state => state.theme.isDay);
@@ -47,17 +48,5 @@ const SplashScreen = ({ navigation }) => {
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  image: {
-    width: 150, 
-    height: 150, 
-  },
-});
 
 export default SplashScreen;

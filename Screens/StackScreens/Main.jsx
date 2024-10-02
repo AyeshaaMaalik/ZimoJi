@@ -1,4 +1,3 @@
-import { StyleSheet, Text, View } from 'react-native'
 import 'react-native-gesture-handler';
 
 import React from 'react'
@@ -16,4 +15,3 @@ const Main = () => {
 
 export default Main
 
-const styles = StyleSheet.create({})

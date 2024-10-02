@@ -4,7 +4,6 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Splash from './StackScreens/Splash';
 import Main from './StackScreens/Main';
 import CameraPermission from './Drawer/CameraPermission';
-import ThemeScreen from './StackScreens/ThemeScreen';
 
 
 const Stack = createNativeStackNavigator();
@@ -16,7 +15,6 @@ const AppNavigator = () => {
         <Stack.Screen name="Splash" component={Splash} />
         <Stack.Screen name="Main" component={Main} /> 
         <Stack.Screen name="Permission" component={CameraPermission} /> 
-        <Stack.Screen name="Theme" component={ThemeScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

@@ -1,5 +1,4 @@
 import React, { useEffect } from 'react';
-import { StyleSheet } from 'react-native';
 import AppNavigator from './Screens/AppNavigator';
 import store from './Screens/Themes/Store';
 import { Provider, useDispatch } from 'react-redux';
@@ -45,4 +44,3 @@ const ThemeManager = () => {
 
 export default App;
 
-const styles = StyleSheet.create({});
