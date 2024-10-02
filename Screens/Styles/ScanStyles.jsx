@@ -10,6 +10,9 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
   },
+  historyContainer: {
+    paddingVertical: 10,
+  },
   header: {
     position: 'absolute',
     top: 0,

@@ -1,10 +1,10 @@
-import React, {  useState } from 'react';
-import { View, Alert, Image, TouchableOpacity, ToastAndroid } from 'react-native';
+import React, { useState } from 'react';
+import { View, Alert, Image, TouchableOpacity, ToastAndroid, Linking, FlatList } from 'react-native';
 import { Camera, useCameraDevice, useCameraPermission, useCodeScanner } from 'react-native-vision-camera';
 import { useNavigation } from '@react-navigation/native';
-import CameraPermission from './CameraPermission';
+import CameraPermission from '../Drawer/CameraPermission';
 import styles from '../Styles/ScanStyles';
-
+import HistoryItem from './HistoryItem';
 const Scan = () => {
   const [isFrontCamera, setIsFrontCamera] = useState(false);
   const { hasPermission, requestPermission } = useCameraPermission();
@@ -14,6 +14,7 @@ const Scan = () => {
   const [isNavigating, setIsNavigating] = useState(false);
   const [history, setHistory] = useState([]);
 
+  
   const codeScanner = useCodeScanner({
     codeTypes: ['qr', 'ean-13'],
     onCodeScanned: (codes) => {
@@ -98,7 +99,7 @@ const Scan = () => {
   );
 
   if (!hasPermission) {
-    <CameraPermission />
+    return <CameraPermission />;
   }
 
   if (device == null) return <NoCameraDeviceError />;
@@ -126,10 +127,20 @@ const Scan = () => {
           <Image source={require('../Assets/Flip.png')} style={styles.flipIcon} resizeMode="contain" />
         </TouchableOpacity>
       </View>
+      <FlatList
+        data={history}
+        renderItem={({ item }) => (
+          <HistoryItem 
+            title={item.title} 
+            date={item.date} 
+            url={item.url || item.scannedText} 
+          />
+        )}
+        keyExtractor={item => item.id.toString()}
+        contentContainerStyle={styles.historyContainer}
+      />
     </View>
   );
 };
-
-
 
 export default Scan;
