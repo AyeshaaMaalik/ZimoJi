@@ -1,10 +1,9 @@
-// History.jsx
 import { useNavigation, useRoute } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity, Image, ScrollView, Alert, Share, FlatList } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Clipboard from '@react-native-clipboard/clipboard';
-import HistoryItem from './HistoryItem'; // Import the HistoryItem component
+import HistoryItem from './HistoryItem'; 
 import styles from '../Styles/HistoryStyles';
 
 const History = () => {
