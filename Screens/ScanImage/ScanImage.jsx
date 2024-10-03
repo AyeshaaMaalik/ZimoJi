@@ -1,16 +1,15 @@
-import { useNavigation } from '@react-navigation/native';
 import React, { useState } from 'react';
-import { View, Text, Image, Alert, StyleSheet, TouchableOpacity, ToastAndroid } from 'react-native';
+import { View, Text, Image, Alert, StyleSheet, TouchableOpacity, ToastAndroid, FlatList } from 'react-native';
 import DocumentPicker from 'react-native-document-picker';
 import RNQRGenerator from 'rn-qr-generator';
-import { readFile } from 'react-native-fs'; 
-import { Linking } from 'react-native'; 
+import { readFile } from 'react-native-fs';
+import { Linking } from 'react-native';
 import styles from '../Styles/ScanImageStyles';
+import ScanItem from './ScanItem';
+import HeaderWithLogo from './HeaderWIthLogo'; 
 
 const ScanImage = () => {
-  const [selectedImage, setSelectedImage] = useState(null);
-  const [qrCodeData, setQRCodeData] = useState('');
-  const navigation = useNavigation();
+  const [scannedItems, setScannedItems] = useState([]);
 
   const pickImage = async () => {
     try {
@@ -20,8 +19,6 @@ const ScanImage = () => {
 
       if (result && result[0]) {
         const fileUri = result[0].uri;
-        setSelectedImage(fileUri);
-        
         scanImage(fileUri); 
       }
     } catch (err) {
@@ -36,16 +33,13 @@ const ScanImage = () => {
   const scanImage = async (uri) => {
     try {
       const base64Image = await readFile(uri, 'base64');
-      //console.log('Base64 Image String:', base64Image); 
-
       const response = await RNQRGenerator.detect({ base64: base64Image });
 
-      console.log('QR Detection Response:', response);
       if (response.values && response.values.length > 0) {
         const detectedValue = response.values[0];
-        setQRCodeData(detectedValue);
+        setScannedItems(prevItems => [...prevItems, { imageUri: uri, qrCodeData: detectedValue }]);
+
         Alert.alert('QR Code Found', detectedValue);
-        
         if (detectedValue.startsWith('http://') || detectedValue.startsWith('https://')) {
           Linking.openURL(detectedValue).catch(err => {
             console.error('Failed to open URL:', err);
@@ -62,42 +56,30 @@ const ScanImage = () => {
     }
   };
 
+  const renderItem = ({ item }) => (
+    <ScanItem imageUri={item.imageUri} qrCodeData={item.qrCodeData} />
+  );
+
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.openDrawer()}>
+      <HeaderWithLogo />
+
+      <View style={styles.centerContent}>
+        <Text style={styles.heading}>SELECT PICTURE FOR SCANNING</Text>
+
+        <TouchableOpacity onPress={pickImage}>
           <Image
-            source={require('../Assets/Menu.png')}
-            style={styles.icon1}
-            resizeMode="contain"
+            source={require('../Assets/ScanImage.png')}
+            style={styles.icon}
           />
         </TouchableOpacity>
-        <View style={styles.centerIconContainer}>
-          <Image
-            source={require('../Assets/SplashWhite.png')}
-            style={styles.icon2}
-            resizeMode="contain"
-          />
-        </View>
       </View>
 
-      <Text style={styles.heading}>SELECT PICTURE FOR SCANNING</Text>
-
-      <TouchableOpacity onPress={pickImage}>
-        <Image
-          source={require('../Assets/ScanImage.png')}
-          style={styles.icon}
-        />
-      </TouchableOpacity>
-
-      {selectedImage && (
-        <>
-          <Image source={{ uri: selectedImage }} style={styles.image} />
-          <Text style={styles.qrCodeText}>
-            QR Code Data: {qrCodeData || 'N/A'}
-          </Text>
-        </>
-      )}
+      <FlatList
+        data={scannedItems}
+        renderItem={renderItem}
+        keyExtractor={(item, index) => index.toString()}
+      />
     </View>
   );
 };
