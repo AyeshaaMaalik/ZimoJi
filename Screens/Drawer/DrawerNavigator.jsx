@@ -3,10 +3,10 @@ import { View, Image, StyleSheet, Text } from 'react-native';
 import { createDrawerNavigator, DrawerContentScrollView, DrawerItemList } from '@react-navigation/drawer';
 import Scan from '../Scan/Scan';
 import ScanImage from '../ScanImage/ScanImage';
-import History from './History';
-import Favorites from './Favorites';
-import Contacts from './Contact';
-import ChooseLogo from './ChooseLogo';
+import History from '../History/History';
+import Favorites from '../Scr/Favorites';
+import Contacts from '../Scr/Contact';
+import ChooseLogo from '../Scr/ChooseLogo';
 import styles from '../Styles/DrawerNavigationStyles';
 
 

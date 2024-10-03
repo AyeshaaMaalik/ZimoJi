@@ -3,7 +3,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Splash from './StackScreens/Splash';
 import Main from './StackScreens/Main';
-import CameraPermission from './Drawer/CameraPermission';
+import CameraPermission from './Scr/CameraPermission';
 
 
 const Stack = createNativeStackNavigator();

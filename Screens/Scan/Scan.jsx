@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, Alert, Image, TouchableOpacity, ToastAndroid, Linking, FlatList } from 'react-native';
 import { Camera, useCameraDevice, useCameraPermission, useCodeScanner } from 'react-native-vision-camera';
 import { useNavigation } from '@react-navigation/native';
-import CameraPermission from '../Drawer/CameraPermission';
+import CameraPermission from '../Scr/CameraPermission';
 import styles from '../Styles/ScanStyles';
 import HistoryItem from './HistoryItem';
 const Scan = () => {

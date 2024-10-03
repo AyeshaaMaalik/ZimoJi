@@ -82,6 +82,13 @@ const styles = StyleSheet.create({
       alignItems: 'center',
       backgroundColor: 'black',
       borderRadius: 8,
+      padding: 20,
+    },
+    HistoryContainer1: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      backgroundColor: 'black',
+      borderRadius: 8,
     },
     HistoryTitle: {
       fontWeight: 'bold',

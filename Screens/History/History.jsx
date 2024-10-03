@@ -1,15 +1,18 @@
+// History.jsx
 import { useNavigation, useRoute } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView, Alert , Share} from 'react-native';
+import { View, Text, TouchableOpacity, Image, ScrollView, Alert, Share, FlatList } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Clipboard from '@react-native-clipboard/clipboard';
+import HistoryItem from './HistoryItem'; // Import the HistoryItem component
 import styles from '../Styles/HistoryStyles';
+
 const History = () => {
   const navigation = useNavigation();
   const route = useRoute();
   const [historyData, setHistoryData] = useState([]);
   const [selectedHistoryItem, setSelectedHistoryItem] = useState(null);
-  const [isFavourite, setIsFavourite] = useState(false); 
+  const [isFavourite, setIsFavourite] = useState(false);
 
   useEffect(() => {
     const loadHistoryData = async () => {
@@ -61,7 +64,7 @@ const History = () => {
       if (!acc[sectionKey]) {
         acc[sectionKey] = [];
       }
-      acc[sectionKey].push(item);
+      acc[sectionKey].push({ ...item, formattedDate, isQRCode: !item.url });
     }
     return acc;
   }, {});
@@ -70,8 +73,6 @@ const History = () => {
     Clipboard.setString(text);
     Alert.alert('Copied to Clipboard', 'The URL or text has been copied to the clipboard.');
   };
-
-
 
   const shareContent = async (content) => {
     try {
@@ -88,11 +89,21 @@ const History = () => {
       Alert.alert('Error', 'Failed to share the content.');
     }
   };
-  
+
   const handleFavouritePress = () => {
-    setIsFavourite(!isFavourite); 
-    navigation.navigate('FAVOURITES'); 
+    setIsFavourite(!isFavourite);
+    navigation.navigate('FAVOURITES');
   };
+
+  const renderItem = ({ item }) => (
+    <HistoryItem
+      item={item}
+      onSelect={(selectedItem) => setSelectedHistoryItem(selectedItem)}
+      onDelete={() => deleteHistoryItem(item)}
+      onCopy={() => copyToClipboard(item.url || item.scannedText)}
+      onShare={() => shareContent(item.url || item.scannedText)}
+    />
+  );
 
   if (selectedHistoryItem) {
     const { formattedDate } = formatDate(selectedHistoryItem.date);
@@ -110,7 +121,7 @@ const History = () => {
 
         <View style={styles.singleHistoryContainer}>
           <TouchableOpacity onPress={() => setSelectedHistoryItem(null)}>
-            <View style={styles.HistoryContainer}>
+            <View style={styles.HistoryContainer1}>
               <Image source={require('../Assets/History.png')} style={styles.optionsIcon2} resizeMode="contain" />
               <Text style={styles.HistoryTitle}>HISTORY</Text>
             </View>
@@ -132,13 +143,10 @@ const History = () => {
           <Text style={styles.date1}>{formattedDate}</Text>
 
           <View style={styles.bottomIcons}>
-          <TouchableOpacity onPress={handleFavouritePress}>
+            <TouchableOpacity onPress={handleFavouritePress}>
               <Image
                 source={require('../Assets/Favourites.png')}
-                style={[
-                  styles.bottomIcon,
-                  { tintColor: isFavourite ? '#8D0000' : 'white' }, 
-                ]}
+                style={[styles.bottomIcon, { tintColor: isFavourite ? '#8D0000' : 'white' }]}
                 resizeMode="contain"
               />
             </TouchableOpacity>
@@ -157,8 +165,6 @@ const History = () => {
     );
   }
 
-
-
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -168,55 +174,45 @@ const History = () => {
         <Image source={require('../Assets/SplashWhite.png')} style={styles.icon2} resizeMode="contain" />
         <View style={styles.placeholder} />
       </View>
-      <ScrollView contentContainerStyle={styles.scrollContainer}>
-        {Object.keys(groupedHistory).map((sectionKey) => (
-          <View key={sectionKey} style={styles.historyContainer}>
-            <View style={styles.HistoryContainer}>
-              <Image source={require('../Assets/History.png')} style={styles.optionsIcon2} resizeMode="contain" />
-              <Text style={styles.HistoryTitle}>HISTORY</Text>
+      <View style={styles.historyContainer}>
+
+        <View style={styles.HistoryContainer}>
+          <Image source={require('../Assets/History.png')} style={styles.optionsIcon2} resizeMode="contain" />
+          <Text style={styles.HistoryTitle}>HISTORY</Text>
+        </View>
+
+        <FlatList
+          data={Object.keys(groupedHistory).sort().map(key => ({
+            title: key,
+            data: groupedHistory[key],
+          }))}
+          keyExtractor={(item) => item.title}
+          renderItem={({ item }) => (
+            <View style={styles.section}>
+              <Text style={styles.sectionTitle}>{item.title}</Text>
+              {item.data.map((dataItem) => (
+                <HistoryItem
+                  key={dataItem.id}
+                  item={dataItem}
+                  onSelect={(selectedItem) => setSelectedHistoryItem(selectedItem)}
+                  onDelete={() => deleteHistoryItem(dataItem)}
+                  onCopy={() => copyToClipboard(dataItem.url || dataItem.scannedText)}
+                  onShare={() => shareContent(dataItem.url || dataItem.scannedText)}
+                />
+              ))}
             </View>
-            <Text style={styles.sectionTitle}>{sectionKey}</Text>
-            {groupedHistory[sectionKey].map((item) => {
-              const { formattedDate } = formatDate(item.date);
-              const isQRCode = !item.url;
-              return (
-                <View key={item.id} style={styles.historyItem}>
-                  <Image source={require('../Assets/MenuSection.png')} style={styles.historyIcon} resizeMode="contain" />
-                  <View style={styles.historyContent}>
-                    {isQRCode ? (
-                      <View style={styles.qrCodeContainer}>
-                        <View style={styles.urlContainer}>
-                          <Image source={require('../Assets/Text.png')} style={styles.optionsIcon11} resizeMode="contain" />
-                          <Text style={styles.urlTitle}>TEXT</Text>
-                        </View>
-                        <Text style={styles.qrCodeText}>{item.scannedText}</Text>
-                        <Text style={styles.title}>{item.title}</Text>
-                        <Text style={styles.date}>{formattedDate}</Text>
-                      </View>
-                    ) : (
-                      <>
-                        <View style={styles.urlContainer}>
-                          <Image source={require('../Assets/download.png')} style={styles.optionsIcon11} resizeMode="contain" />
-                          <Text style={styles.urlTitle}>URL</Text>
-                        </View>
-                        <Text style={styles.url}>{item.url}</Text>
-                        <Text style={styles.title}>{item.title}</Text>
-                        <Text style={styles.date}>{formattedDate}</Text>
-                      </>
-                    )}
-                  </View>
-                  <TouchableOpacity style={styles.iconWrapper} onPress={() => setSelectedHistoryItem(item)}>
-                    <Image source={require('../Assets/Option.png')} style={styles.optionsIcon} resizeMode="contain" />
-                  </TouchableOpacity>
-                </View>
-              );
-            })}
-          </View>
-        ))}
-      </ScrollView>
+          )}
+          ListEmptyComponent={
+            <View style={styles.emptyContainer}>
+              <Text style={styles.emptyText}>No history available.</Text>
+            </View>
+          }
+
+        />
+
+      </View>
     </View>
   );
 };
-
 
 export default History;
